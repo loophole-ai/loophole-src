@@ -9,9 +9,9 @@ import { Action2, MenuId, registerAction2 } from '../../../../platform/actions/c
 import { ContextKeyExpr, IContextKey, IContextKeyService } from '../../../../platform/contextkey/common/contextkey.js'
 import { ISCMService } from '../../scm/common/scm.js'
 import { ProxyChannel } from '../../../../base/parts/ipc/common/ipc.js'
-import { IVoidSCMService } from '../common/voidSCMTypes.js'
+import { ILoopholeSCMService } from '../common/voidSCMTypes.js'
 import { IMainProcessService } from '../../../../platform/ipc/common/mainProcessService.js'
-import { IVoidSettingsService } from '../common/voidSettingsService.js'
+import { ILoopholeSettingsService } from '../common/voidSettingsService.js'
 import { IConvertToLLMMessageService } from './convertToLLMMessageService.js'
 import { ILLMMessageService } from '../common/sendLLMMessageService.js'
 import { ModelSelection, OverridesOfModel, ModelSelectionOptions } from '../common/voidSettingsTypes.js'
@@ -37,22 +37,22 @@ export interface IGenerateCommitMessageService {
 	abort(): void
 }
 
-export const IGenerateCommitMessageService = createDecorator<IGenerateCommitMessageService>('voidGenerateCommitMessageService');
+export const IGenerateCommitMessageService = createDecorator<IGenerateCommitMessageService>('loopholeGenerateCommitMessageService');
 
-const loadingContextKey = 'voidSCMGenerateCommitMessageLoading'
+const loadingContextKey = 'loopholeSCMGenerateCommitMessageLoading'
 
 class GenerateCommitMessageService extends Disposable implements IGenerateCommitMessageService {
 	readonly _serviceBrand: undefined;
 	private readonly execute = new ThrottledDelayer(300)
 	private llmRequestId: string | null = null
 	private currentRequestId: string | null = null
-	private voidSCM: IVoidSCMService
+	private loopholeSCM: ILoopholeSCMService
 	private loadingContextKey: IContextKey<boolean>
 
 	constructor(
 		@ISCMService private readonly scmService: ISCMService,
 		@IMainProcessService mainProcessService: IMainProcessService,
-		@IVoidSettingsService private readonly voidSettingsService: IVoidSettingsService,
+		@ILoopholeSettingsService private readonly loopholeSettingsService: ILoopholeSettingsService,
 		@IConvertToLLMMessageService private readonly convertToLLMMessageService: IConvertToLLMMessageService,
 		@ILLMMessageService private readonly llmMessageService: ILLMMessageService,
 		@IContextKeyService private readonly contextKeyService: IContextKeyService,
@@ -60,7 +60,7 @@ class GenerateCommitMessageService extends Disposable implements IGenerateCommit
 	) {
 		super()
 		this.loadingContextKey = this.contextKeyService.createKey(loadingContextKey, false)
-		this.voidSCM = ProxyChannel.toService<IVoidSCMService>(mainProcessService.getChannel('void-channel-scm'))
+		this.loopholeSCM = ProxyChannel.toService<ILoopholeSCMService>(mainProcessService.getChannel('loophole-channel-scm'))
 	}
 
 	override dispose() {
@@ -78,17 +78,17 @@ class GenerateCommitMessageService extends Disposable implements IGenerateCommit
 			try {
 				const { path, repo } = this.gitRepoInfo()
 				const [stat, sampledDiffs, branch, log] = await Promise.all([
-					this.voidSCM.gitStat(path),
-					this.voidSCM.gitSampledDiffs(path),
-					this.voidSCM.gitBranch(path),
-					this.voidSCM.gitLog(path)
+					this.loopholeSCM.gitStat(path),
+					this.loopholeSCM.gitSampledDiffs(path),
+					this.loopholeSCM.gitBranch(path),
+					this.loopholeSCM.gitLog(path)
 				])
 
 				if (!this.isCurrentRequest(requestId)) { throw new CancellationError() }
 
-				const modelSelection = this.voidSettingsService.state.modelSelectionOfFeature['SCM'] ?? null
-				const modelSelectionOptions = modelSelection ? this.voidSettingsService.state.optionsOfModelSelection['SCM'][modelSelection?.providerName]?.[modelSelection.modelName] : undefined
-				const overridesOfModel = this.voidSettingsService.state.overridesOfModel
+				const modelSelection = this.loopholeSettingsService.state.modelSelectionOfFeature['SCM'] ?? null
+				const modelSelectionOptions = modelSelection ? this.loopholeSettingsService.state.optionsOfModelSelection['SCM'][modelSelection?.providerName]?.[modelSelection.modelName] : undefined
+				const overridesOfModel = this.loopholeSettingsService.state.overridesOfModel
 
 				const modelOptions: ModelOptions = { modelSelection, modelSelectionOptions, overridesOfModel }
 
@@ -159,7 +159,7 @@ class GenerateCommitMessageService extends Disposable implements IGenerateCommit
 				onAbort: () => {
 					reject(new CancellationError())
 				},
-				logging: { loggingName: 'VoidSCM - Commit Message' },
+				logging: { loggingName: 'LoopholeSCM - Commit Message' },
 			})
 		})
 	}
@@ -177,7 +177,7 @@ class GenerateCommitMessageService extends Disposable implements IGenerateCommit
 	private onError(error: any) {
 		if (!isCancellationError(error)) {
 			console.error(error)
-			this.notificationService.error(localize2('voidFailedToGenerateCommitMessage', 'Failed to generate commit message.').value)
+			this.notificationService.error(localize2('loopholeFailedToGenerateCommitMessage', 'Failed to generate commit message.').value)
 		}
 	}
 }
@@ -185,10 +185,10 @@ class GenerateCommitMessageService extends Disposable implements IGenerateCommit
 class GenerateCommitMessageAction extends Action2 {
 	constructor() {
 		super({
-			id: 'void.generateCommitMessageAction',
-			title: localize2('voidCommitMessagePrompt', 'Void: Generate Commit Message'),
+			id: 'loophole.generateCommitMessageAction',
+			title: localize2('loopholeCommitMessagePrompt', 'Loophole: Generate Commit Message'),
 			icon: ThemeIcon.fromId('sparkle'),
-			tooltip: localize2('voidCommitMessagePromptTooltip', 'Void: Generate Commit Message'),
+			tooltip: localize2('loopholeCommitMessagePromptTooltip', 'Loophole: Generate Commit Message'),
 			f1: true,
 			menu: [{
 				id: MenuId.SCMInputBox,
@@ -207,10 +207,10 @@ class GenerateCommitMessageAction extends Action2 {
 class LoadingGenerateCommitMessageAction extends Action2 {
 	constructor() {
 		super({
-			id: 'void.loadingGenerateCommitMessageAction',
-			title: localize2('voidCommitMessagePromptCancel', 'Void: Cancel Commit Message Generation'),
+			id: 'loophole.loadingGenerateCommitMessageAction',
+			title: localize2('loopholeCommitMessagePromptCancel', 'Loophole: Cancel Commit Message Generation'),
 			icon: ThemeIcon.fromId('stop-circle'),
-			tooltip: localize2('voidCommitMessagePromptCancelTooltip', 'Void: Cancel Commit Message Generation'),
+			tooltip: localize2('loopholeCommitMessagePromptCancelTooltip', 'Loophole: Cancel Commit Message Generation'),
 			f1: false, //Having a cancel command in the command palette is more confusing than useful.
 			menu: [{
 				id: MenuId.SCMInputBox,

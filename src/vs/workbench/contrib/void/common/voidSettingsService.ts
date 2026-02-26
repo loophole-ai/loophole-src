@@ -12,8 +12,8 @@ import { createDecorator } from '../../../../platform/instantiation/common/insta
 import { IStorageService, StorageScope, StorageTarget } from '../../../../platform/storage/common/storage.js';
 import { IMetricsService } from './metricsService.js';
 import { defaultProviderSettings, getModelCapabilities, ModelOverrides } from './modelCapabilities.js';
-import { VOID_SETTINGS_STORAGE_KEY } from './storageKeys.js';
-import { defaultSettingsOfProvider, FeatureName, ProviderName, ModelSelectionOfFeature, SettingsOfProvider, SettingName, providerNames, ModelSelection, modelSelectionsEqual, featureNames, VoidStatefulModelInfo, GlobalSettings, GlobalSettingName, defaultGlobalSettings, ModelSelectionOptions, OptionsOfModelSelection, ChatMode, OverridesOfModel, defaultOverridesOfModel, MCPUserStateOfName as MCPUserStateOfName, MCPUserState } from './voidSettingsTypes.js';
+import { LOOPHOLE_SETTINGS_STORAGE_KEY } from './storageKeys.js';
+import { defaultSettingsOfProvider, FeatureName, ProviderName, ModelSelectionOfFeature, SettingsOfProvider, SettingName, providerNames, ModelSelection, modelSelectionsEqual, featureNames, LoopholeStatefulModelInfo, GlobalSettings, GlobalSettingName, defaultGlobalSettings, ModelSelectionOptions, OptionsOfModelSelection, ChatMode, OverridesOfModel, defaultOverridesOfModel, MCPUserStateOfName as MCPUserStateOfName, MCPUserState } from './voidSettingsTypes.js';
 
 
 // name is the name in the dropdown
@@ -37,7 +37,7 @@ type SetGlobalSettingFn = <T extends GlobalSettingName>(settingName: T, newVal: 
 type SetOptionsOfModelSelection = (featureName: FeatureName, providerName: ProviderName, modelName: string, newVal: Partial<ModelSelectionOptions>) => void
 
 
-export type VoidSettingsState = {
+export type LoopholeSettingsState = {
 	readonly settingsOfProvider: SettingsOfProvider; // optionsOfProvider
 	readonly modelSelectionOfFeature: ModelSelectionOfFeature; // stateOfFeature
 	readonly optionsOfModelSelection: OptionsOfModelSelection;
@@ -48,13 +48,13 @@ export type VoidSettingsState = {
 	readonly _modelOptions: ModelOption[] // computed based on the two above items
 }
 
-// type RealVoidSettings = Exclude<keyof VoidSettingsState, '_modelOptions'>
-// type EventProp<T extends RealVoidSettings = RealVoidSettings> = T extends 'globalSettings' ? [T, keyof VoidSettingsState[T]] : T | 'all'
+// type RealVoidSettings = Exclude<keyof LoopholeSettingsState, '_modelOptions'>
+// type EventProp<T extends RealVoidSettings = RealVoidSettings> = T extends 'globalSettings' ? [T, keyof LoopholeSettingsState[T]] : T | 'all'
 
 
-export interface IVoidSettingsService {
+export interface ILoopholeSettingsService {
 	readonly _serviceBrand: undefined;
-	readonly state: VoidSettingsState; // in order to play nicely with react, you should immutably change state
+	readonly state: LoopholeSettingsState; // in order to play nicely with react, you should immutably change state
 	readonly waitForInitState: Promise<void>;
 
 	onDidChangeState: Event<void>;
@@ -68,7 +68,7 @@ export interface IVoidSettingsService {
 	// setting to undefined CLEARS it, unlike others:
 	setOverridesOfModel(providerName: ProviderName, modelName: string, overrides: Partial<ModelOverrides> | undefined): Promise<void>;
 
-	dangerousSetState(newState: VoidSettingsState): Promise<void>;
+	dangerousSetState(newState: LoopholeSettingsState): Promise<void>;
 	resetState(): Promise<void>;
 
 	setAutodetectedModels(providerName: ProviderName, modelNames: string[], logging: object): void;
@@ -84,10 +84,10 @@ export interface IVoidSettingsService {
 
 
 
-const _modelsWithSwappedInNewModels = (options: { existingModels: VoidStatefulModelInfo[], models: string[], type: 'autodetected' | 'default' }) => {
+const _modelsWithSwappedInNewModels = (options: { existingModels: LoopholeStatefulModelInfo[], models: string[], type: 'autodetected' | 'default' }) => {
 	const { existingModels, models, type } = options
 
-	const existingModelsMap: Record<string, VoidStatefulModelInfo> = {}
+	const existingModelsMap: Record<string, LoopholeStatefulModelInfo> = {}
 	for (const existingModel of existingModels) {
 		existingModelsMap[existingModel.modelName] = existingModel
 	}
@@ -120,7 +120,7 @@ export const modelFilterOfFeatureName: {
 }
 
 
-const _stateWithMergedDefaultModels = (state: VoidSettingsState): VoidSettingsState => {
+const _stateWithMergedDefaultModels = (state: LoopholeSettingsState): LoopholeSettingsState => {
 	let newSettingsOfProvider = state.settingsOfProvider
 
 	// recompute default models
@@ -143,7 +143,7 @@ const _stateWithMergedDefaultModels = (state: VoidSettingsState): VoidSettingsSt
 	}
 }
 
-const _validatedModelState = (state: Omit<VoidSettingsState, '_modelOptions'>): VoidSettingsState => {
+const _validatedModelState = (state: Omit<LoopholeSettingsState, '_modelOptions'>): LoopholeSettingsState => {
 
 	let newSettingsOfProvider = state.settingsOfProvider
 
@@ -202,7 +202,7 @@ const _validatedModelState = (state: Omit<VoidSettingsState, '_modelOptions'>): 
 		modelSelectionOfFeature: newModelSelectionOfFeature,
 		overridesOfModel: state.overridesOfModel,
 		_modelOptions: newModelOptions,
-	} satisfies VoidSettingsState
+	} satisfies LoopholeSettingsState
 
 	return newState
 }
@@ -212,7 +212,7 @@ const _validatedModelState = (state: Omit<VoidSettingsState, '_modelOptions'>): 
 
 
 const defaultState = () => {
-	const d: VoidSettingsState = {
+	const d: LoopholeSettingsState = {
 		settingsOfProvider: deepClone(defaultSettingsOfProvider),
 		modelSelectionOfFeature: { 'Chat': null, 'Ctrl+K': null, 'Autocomplete': null, 'Apply': null, 'SCM': null },
 		globalSettings: deepClone(defaultGlobalSettings),
@@ -225,14 +225,14 @@ const defaultState = () => {
 }
 
 
-export const IVoidSettingsService = createDecorator<IVoidSettingsService>('VoidSettingsService');
-class VoidSettingsService extends Disposable implements IVoidSettingsService {
+export const ILoopholeSettingsService = createDecorator<ILoopholeSettingsService>('LoopholeSettingsService');
+class LoopholeSettingsService extends Disposable implements ILoopholeSettingsService {
 	_serviceBrand: undefined;
 
 	private readonly _onDidChangeState = new Emitter<void>();
 	readonly onDidChangeState: Event<void> = this._onDidChangeState.event; // this is primarily for use in react, so react can listen + update on state changes
 
-	state: VoidSettingsState;
+	state: LoopholeSettingsState;
 
 	private readonly _resolver: () => void
 	waitForInitState: Promise<void> // await this if you need a valid state initially
@@ -258,7 +258,7 @@ class VoidSettingsService extends Disposable implements IVoidSettingsService {
 
 
 
-	dangerousSetState = async (newState: VoidSettingsState) => {
+	dangerousSetState = async (newState: LoopholeSettingsState) => {
 		this.state = _validatedModelState(newState)
 		await this._storeState()
 		this._onDidChangeState.fire()
@@ -273,7 +273,7 @@ class VoidSettingsService extends Disposable implements IVoidSettingsService {
 
 
 	async readAndInitializeState() {
-		let readS: VoidSettingsState
+		let readS: LoopholeSettingsState
 		try {
 			readS = await this._readState();
 			// 1.0.3 addition, remove when enough users have had this code run
@@ -347,8 +347,8 @@ class VoidSettingsService extends Disposable implements IVoidSettingsService {
 	}
 
 
-	private async _readState(): Promise<VoidSettingsState> {
-		const encryptedState = this._storageService.get(VOID_SETTINGS_STORAGE_KEY, StorageScope.APPLICATION)
+	private async _readState(): Promise<LoopholeSettingsState> {
+		const encryptedState = this._storageService.get(LOOPHOLE_SETTINGS_STORAGE_KEY, StorageScope.APPLICATION)
 
 		if (!encryptedState)
 			return defaultState()
@@ -362,7 +362,7 @@ class VoidSettingsService extends Disposable implements IVoidSettingsService {
 	private async _storeState() {
 		const state = this.state
 		const encryptedState = await this._encryptionService.encrypt(JSON.stringify(state))
-		this._storageService.store(VOID_SETTINGS_STORAGE_KEY, encryptedState, StorageScope.APPLICATION, StorageTarget.USER);
+		this._storageService.store(LOOPHOLE_SETTINGS_STORAGE_KEY, encryptedState, StorageScope.APPLICATION, StorageTarget.USER);
 	}
 
 	setSettingOfProvider: SetSettingOfProviderFn = async (providerName, settingName, newVal) => {
@@ -410,7 +410,7 @@ class VoidSettingsService extends Disposable implements IVoidSettingsService {
 	}
 
 	setGlobalSetting: SetGlobalSettingFn = async (settingName, newVal) => {
-		const newState: VoidSettingsState = {
+		const newState: LoopholeSettingsState = {
 			...this.state,
 			globalSettings: {
 				...this.state.globalSettings,
@@ -429,7 +429,7 @@ class VoidSettingsService extends Disposable implements IVoidSettingsService {
 
 
 	setModelSelectionOfFeature: SetModelSelectionOfFeatureFn = async (featureName, newVal) => {
-		const newState: VoidSettingsState = {
+		const newState: LoopholeSettingsState = {
 			...this.state,
 			modelSelectionOfFeature: {
 				...this.state.modelSelectionOfFeature,
@@ -452,7 +452,7 @@ class VoidSettingsService extends Disposable implements IVoidSettingsService {
 
 
 	setOptionsOfModelSelection = async (featureName: FeatureName, providerName: ProviderName, modelName: string, newVal: Partial<ModelSelectionOptions>) => {
-		const newState: VoidSettingsState = {
+		const newState: LoopholeSettingsState = {
 			...this.state,
 			optionsOfModelSelection: {
 				...this.state.optionsOfModelSelection,
@@ -475,7 +475,7 @@ class VoidSettingsService extends Disposable implements IVoidSettingsService {
 	}
 
 	setOverridesOfModel = async (providerName: ProviderName, modelName: string, overrides: Partial<ModelOverrides> | undefined) => {
-		const newState: VoidSettingsState = {
+		const newState: LoopholeSettingsState = {
 			...this.state,
 			overridesOfModel: {
 				...this.state.overridesOfModel,
@@ -522,7 +522,7 @@ class VoidSettingsService extends Disposable implements IVoidSettingsService {
 		const modelIdx = models.findIndex(m => m.modelName === modelName)
 		if (modelIdx === -1) return
 		const newIsHidden = !models[modelIdx].isHidden
-		const newModels: VoidStatefulModelInfo[] = [
+		const newModels: LoopholeStatefulModelInfo[] = [
 			...models.slice(0, modelIdx),
 			{ ...models[modelIdx], isHidden: newIsHidden },
 			...models.slice(modelIdx + 1, Infinity)
@@ -562,7 +562,7 @@ class VoidSettingsService extends Disposable implements IVoidSettingsService {
 
 	// MCP Server State
 	private _setMCPUserStateOfName = async (newStates: MCPUserStateOfName) => {
-		const newState: VoidSettingsState = {
+		const newState: LoopholeSettingsState = {
 			...this.state,
 			mcpUserStateOfName: {
 				...this.state.mcpUserStateOfName,
@@ -612,4 +612,4 @@ class VoidSettingsService extends Disposable implements IVoidSettingsService {
 }
 
 
-registerSingleton(IVoidSettingsService, VoidSettingsService, InstantiationType.Eager);
+registerSingleton(ILoopholeSettingsService, LoopholeSettingsService, InstantiationType.Eager);

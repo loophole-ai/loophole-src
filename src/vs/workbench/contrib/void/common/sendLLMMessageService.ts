@@ -12,7 +12,7 @@ import { IMainProcessService } from '../../../../platform/ipc/common/mainProcess
 import { generateUuid } from '../../../../base/common/uuid.js';
 import { Event } from '../../../../base/common/event.js';
 import { Disposable } from '../../../../base/common/lifecycle.js';
-import { IVoidSettingsService } from './voidSettingsService.js';
+import { ILoopholeSettingsService } from './voidSettingsService.js';
 import { IMCPService } from './mcpService.js';
 
 // calls channel to implement features
@@ -60,7 +60,7 @@ export class LLMMessageService extends Disposable implements ILLMMessageService 
 
 	constructor(
 		@IMainProcessService private readonly mainProcessService: IMainProcessService, // used as a renderer (only usable on client side)
-		@IVoidSettingsService private readonly voidSettingsService: IVoidSettingsService,
+		@ILoopholeSettingsService private readonly voidSettingsService: ILoopholeSettingsService,
 		// @INotificationService private readonly notificationService: INotificationService,
 		@IMCPService private readonly mcpService: IMCPService,
 	) {
@@ -68,7 +68,7 @@ export class LLMMessageService extends Disposable implements ILLMMessageService 
 
 		// const service = ProxyChannel.toService<LLMMessageChannel>(mainProcessService.getChannel('void-channel-sendLLMMessage')); // lets you call it like a service
 		// see llmMessageChannel.ts
-		this.channel = this.mainProcessService.getChannel('void-channel-llmMessage')
+		this.channel = this.mainProcessService.getChannel('loophole-channel-llmMessage')
 
 		// .listen sets up an IPC channel and takes a few ms, so we set up listeners immediately and add hooks to them instead
 		// llm
@@ -105,7 +105,7 @@ export class LLMMessageService extends Disposable implements ILLMMessageService 
 
 		// throw an error if no model/provider selected (this should usually never be reached, the UI should check this first, but might happen in cases like Apply where we haven't built much UI/checks yet, good practice to have check logic on backend)
 		if (modelSelection === null) {
-			const message = `Please add a provider in Void's Settings.`
+			const message = `Please add a provider in Loophole's Settings.`
 			onError({ message, fullError: null })
 			return null
 		}

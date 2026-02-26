@@ -10,18 +10,18 @@ import { localize2 } from '../../../../nls.js';
 import { Action2, registerAction2 } from '../../../../platform/actions/common/actions.js';
 import { INotificationActions, INotificationHandle, INotificationService } from '../../../../platform/notification/common/notification.js';
 import { IMetricsService } from '../common/metricsService.js';
-import { IVoidUpdateService } from '../common/voidUpdateService.js';
+import { ILoopholeUpdateService } from '../common/voidUpdateService.js';
 import { IWorkbenchContribution, registerWorkbenchContribution2, WorkbenchPhase } from '../../../common/contributions.js';
 import * as dom from '../../../../base/browser/dom.js';
 import { IUpdateService } from '../../../../platform/update/common/update.js';
-import { VoidCheckUpdateRespose } from '../common/voidUpdateServiceTypes.js';
+import { LoopholeCheckUpdateRespose } from '../common/voidUpdateServiceTypes.js';
 import { IAction } from '../../../../base/common/actions.js';
 
 
 
 
-const notifyUpdate = (res: VoidCheckUpdateRespose & { message: string }, notifService: INotificationService, updateService: IUpdateService): INotificationHandle => {
-	const message = res?.message || 'This is a very old version of Void, please download the latest version! [Void Editor](https://voideditor.com/download-beta)!'
+const notifyUpdate = (res: LoopholeCheckUpdateRespose & { message: string }, notifService: INotificationService, updateService: IUpdateService): INotificationHandle => {
+	const message = res?.message || 'This is a very old version of Loophole, please download the latest version! [Loophole](https://loophole.dev/download-beta)!'
 
 	let actions: INotificationActions | undefined
 
@@ -31,13 +31,13 @@ const notifyUpdate = (res: VoidCheckUpdateRespose & { message: string }, notifSe
 		if (res.action === 'reinstall') {
 			primary.push({
 				label: `Reinstall`,
-				id: 'void.updater.reinstall',
+				id: 'loophole.updater.reinstall',
 				enabled: true,
 				tooltip: '',
 				class: undefined,
 				run: () => {
 					const { window } = dom.getActiveWindow()
-					window.open('https://voideditor.com/download-beta')
+					window.open('https://loophole.dev/download-beta')
 				}
 			})
 		}
@@ -45,7 +45,7 @@ const notifyUpdate = (res: VoidCheckUpdateRespose & { message: string }, notifSe
 		if (res.action === 'download') {
 			primary.push({
 				label: `Download`,
-				id: 'void.updater.download',
+				id: 'loophole.updater.download',
 				enabled: true,
 				tooltip: '',
 				class: undefined,
@@ -59,7 +59,7 @@ const notifyUpdate = (res: VoidCheckUpdateRespose & { message: string }, notifSe
 		if (res.action === 'apply') {
 			primary.push({
 				label: `Apply`,
-				id: 'void.updater.apply',
+				id: 'loophole.updater.apply',
 				enabled: true,
 				tooltip: '',
 				class: undefined,
@@ -72,7 +72,7 @@ const notifyUpdate = (res: VoidCheckUpdateRespose & { message: string }, notifSe
 		if (res.action === 'restart') {
 			primary.push({
 				label: `Restart`,
-				id: 'void.updater.restart',
+				id: 'loophole.updater.restart',
 				enabled: true,
 				tooltip: '',
 				class: undefined,
@@ -83,21 +83,21 @@ const notifyUpdate = (res: VoidCheckUpdateRespose & { message: string }, notifSe
 		}
 
 		primary.push({
-			id: 'void.updater.site',
+			id: 'loophole.updater.site',
 			enabled: true,
-			label: `Void Site`,
+			label: `Loophole Site`,
 			tooltip: '',
 			class: undefined,
 			run: () => {
 				const { window } = dom.getActiveWindow()
-				window.open('https://voideditor.com/')
+				window.open('https://loophole.dev/')
 			}
 		})
 
 		actions = {
 			primary: primary,
 			secondary: [{
-				id: 'void.updater.close',
+				id: 'loophole.updater.close',
 				enabled: true,
 				label: `Keep current version`,
 				tooltip: '',
@@ -127,7 +127,7 @@ const notifyUpdate = (res: VoidCheckUpdateRespose & { message: string }, notifSe
 	// })
 }
 const notifyErrChecking = (notifService: INotificationService): INotificationHandle => {
-	const message = `Void Error: There was an error checking for updates. If this persists, please get in touch or reinstall Void [here](https://voideditor.com/download-beta)!`
+	const message = `Loophole Error: There was an error checking for updates. If this persists, please get in touch or reinstall Loophole [here](https://loophole.dev/download-beta)!`
 	const notifController = notifService.notify({
 		severity: Severity.Info,
 		message: message,
@@ -137,31 +137,31 @@ const notifyErrChecking = (notifService: INotificationService): INotificationHan
 }
 
 
-const performVoidCheck = async (
+const performLoopholeCheck = async (
 	explicit: boolean,
 	notifService: INotificationService,
-	voidUpdateService: IVoidUpdateService,
+	loopholeUpdateService: ILoopholeUpdateService,
 	metricsService: IMetricsService,
 	updateService: IUpdateService,
 ): Promise<INotificationHandle | null> => {
 
 	const metricsTag = explicit ? 'Manual' : 'Auto'
 
-	metricsService.capture(`Void Update ${metricsTag}: Checking...`, {})
-	const res = await voidUpdateService.check(explicit)
+	metricsService.capture(`LoopholeUpdate ${metricsTag}: Checking...`, {})
+	const res = await loopholeUpdateService.check(explicit)
 	if (!res) {
 		const notifController = notifyErrChecking(notifService);
-		metricsService.capture(`Void Update ${metricsTag}: Error`, { res })
+		metricsService.capture(`LoopholeUpdate ${metricsTag}: Error`, { res })
 		return notifController
 	}
 	else {
 		if (res.message) {
 			const notifController = notifyUpdate(res, notifService, updateService)
-			metricsService.capture(`Void Update ${metricsTag}: Yes`, { res })
+			metricsService.capture(`LoopholeUpdate ${metricsTag}: Yes`, { res })
 			return notifController
 		}
 		else {
-			metricsService.capture(`Void Update ${metricsTag}: No`, { res })
+			metricsService.capture(`LoopholeUpdate ${metricsTag}: No`, { res })
 			return null
 		}
 	}
@@ -176,19 +176,19 @@ registerAction2(class extends Action2 {
 	constructor() {
 		super({
 			f1: true,
-			id: 'void.voidCheckUpdate',
-			title: localize2('voidCheckUpdate', 'Void: Check for Updates'),
+			id: 'loophole.voidCheckUpdate',
+			title: localize2('loopholeCheckUpdate', 'Loophole: Check for Updates'),
 		});
 	}
 	async run(accessor: ServicesAccessor): Promise<void> {
-		const voidUpdateService = accessor.get(IVoidUpdateService)
+		const loopholeUpdateService = accessor.get(ILoopholeUpdateService)
 		const notifService = accessor.get(INotificationService)
 		const metricsService = accessor.get(IMetricsService)
 		const updateService = accessor.get(IUpdateService)
 
 		const currNotifController = lastNotifController
 
-		const newController = await performVoidCheck(true, notifService, voidUpdateService, metricsService, updateService)
+		const newController = await performLoopholeCheck(true, notifService, loopholeUpdateService, metricsService, updateService)
 
 		if (newController) {
 			currNotifController?.close()
@@ -198,10 +198,10 @@ registerAction2(class extends Action2 {
 })
 
 // on mount
-class VoidUpdateWorkbenchContribution extends Disposable implements IWorkbenchContribution {
-	static readonly ID = 'workbench.contrib.void.voidUpdate'
+class LoopholeUpdateWorkbenchContribution extends Disposable implements IWorkbenchContribution {
+	static readonly ID = 'workbench.contrib.loophole.loopholeUpdate'
 	constructor(
-		@IVoidUpdateService voidUpdateService: IVoidUpdateService,
+		@ILoopholeUpdateService loopholeUpdateService: ILoopholeUpdateService,
 		@IMetricsService metricsService: IMetricsService,
 		@INotificationService notifService: INotificationService,
 		@IUpdateService updateService: IUpdateService,
@@ -209,7 +209,7 @@ class VoidUpdateWorkbenchContribution extends Disposable implements IWorkbenchCo
 		super()
 
 		const autoCheck = () => {
-			performVoidCheck(false, notifService, voidUpdateService, metricsService, updateService)
+			performLoopholeCheck(false, notifService, loopholeUpdateService, metricsService, updateService)
 		}
 
 		// check once 5 seconds after mount
@@ -225,4 +225,4 @@ class VoidUpdateWorkbenchContribution extends Disposable implements IWorkbenchCo
 
 	}
 }
-registerWorkbenchContribution2(VoidUpdateWorkbenchContribution.ID, VoidUpdateWorkbenchContribution, WorkbenchPhase.BlockRestore);
+registerWorkbenchContribution2(LoopholeUpdateWorkbenchContribution.ID, LoopholeUpdateWorkbenchContribution, WorkbenchPhase.BlockRestore);
