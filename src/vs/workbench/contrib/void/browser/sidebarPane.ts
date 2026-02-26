@@ -95,21 +95,21 @@ class SidebarViewPane extends ViewPane {
 
 
 
-// ---------- Register viewpane inside the void container ----------
+// ---------- Register viewpane inside the loophole container ----------
 
-// const voidThemeIcon = Codicon.symbolObject;
-// const voidViewIcon = registerIcon('void-view-icon', voidThemeIcon, localize('voidViewIcon', 'View icon of the Void chat view.'));
+// const loopholeThemeIcon = Codicon.symbolObject;
+// const loopholeViewIcon = registerIcon('loophole-view-icon', loopholeThemeIcon, localize('loopholeViewIcon', 'View icon of the Loophole chat view.'));
 
 // called VIEWLET_ID in other places for some reason
-export const VOID_VIEW_CONTAINER_ID = 'workbench.view.void'
-export const VOID_VIEW_ID = VOID_VIEW_CONTAINER_ID
+export const LOOPHOLE_VIEW_CONTAINER_ID = 'workbench.view.loophole'
+export const LOOPHOLE_VIEW_ID = LOOPHOLE_VIEW_CONTAINER_ID
 
 // Register view container
 const viewContainerRegistry = Registry.as<IViewContainersRegistry>(ViewContainerExtensions.ViewContainersRegistry);
 const container = viewContainerRegistry.registerViewContainer({
-	id: VOID_VIEW_CONTAINER_ID,
-	title: nls.localize2('voidContainer', 'Chat'), // this is used to say "Void" (Ctrl + L)
-	ctorDescriptor: new SyncDescriptor(ViewPaneContainer, [VOID_VIEW_CONTAINER_ID, {
+	id: LOOPHOLE_VIEW_CONTAINER_ID,
+	title: nls.localize2('loopholeContainer', 'Loophole'), // this is used to say "Loophole" (Ctrl + L)
+	ctorDescriptor: new SyncDescriptor(ViewPaneContainer, [LOOPHOLE_VIEW_CONTAINER_ID, {
 		mergeViewWithContainerWhenSingleView: true,
 		orientation: Orientation.HORIZONTAL,
 	}]),
@@ -127,10 +127,10 @@ const container = viewContainerRegistry.registerViewContainer({
 // Register search default location to the container (sidebar)
 const viewsRegistry = Registry.as<IViewsRegistry>(ViewExtensions.ViewsRegistry);
 viewsRegistry.registerViews([{
-	id: VOID_VIEW_ID,
+	id: LOOPHOLE_VIEW_ID,
 	hideByDefault: false, // start open
-	// containerIcon: voidViewIcon,
-	name: nls.localize2('voidChat', ''), // this says ... : CHAT
+	// containerIcon: loopholeViewIcon,
+	name: nls.localize2('loopholeChat', ''), // this says ... : CHAT
 	ctorDescriptor: new SyncDescriptor(SidebarViewPane),
 	canToggleVisibility: false,
 	canMoveView: false, // can't move this out of its container
@@ -139,7 +139,7 @@ viewsRegistry.registerViews([{
 	// singleViewPaneContainerTitle: 'hi',
 
 	// openCommandActionDescriptor: {
-	// 	id: VOID_VIEW_CONTAINER_ID,
+	// 	id: LOOPHOLE_VIEW_CONTAINER_ID,
 	// 	keybindings: {
 	// 		primary: KeyMod.CtrlCmd | KeyCode.KeyL,
 	// 	},
@@ -149,26 +149,26 @@ viewsRegistry.registerViews([{
 
 
 // open sidebar
-export const VOID_OPEN_SIDEBAR_ACTION_ID = 'void.openSidebar'
+export const LOOPHOLE_OPEN_SIDEBAR_ACTION_ID = 'loophole.openSidebar'
 registerAction2(class extends Action2 {
 	constructor() {
 		super({
-			id: VOID_OPEN_SIDEBAR_ACTION_ID,
-			title: 'Open Void Sidebar',
+			id: LOOPHOLE_OPEN_SIDEBAR_ACTION_ID,
+			title: 'Open Loophole Sidebar',
 		})
 	}
 	run(accessor: ServicesAccessor): void {
 		const viewsService = accessor.get(IViewsService)
-		viewsService.openViewContainer(VOID_VIEW_CONTAINER_ID);
+		viewsService.openViewContainer(LOOPHOLE_VIEW_CONTAINER_ID);
 	}
 });
 
-export class SidebarStartContribution implements IWorkbenchContribution {
-	static readonly ID = 'workbench.contrib.startupVoidSidebar';
+export class LoopholeSidebarStartContribution implements IWorkbenchContribution {
+	static readonly ID = 'workbench.contrib.startupLoopholeSidebar';
 	constructor(
 		@ICommandService private readonly commandService: ICommandService,
 	) {
-		this.commandService.executeCommand(VOID_OPEN_SIDEBAR_ACTION_ID)
+		this.commandService.executeCommand(LOOPHOLE_OPEN_SIDEBAR_ACTION_ID)
 	}
 }
-registerWorkbenchContribution2(SidebarStartContribution.ID, SidebarStartContribution, WorkbenchPhase.AfterRestored);
+registerWorkbenchContribution2(LoopholeSidebarStartContribution.ID, LoopholeSidebarStartContribution, WorkbenchPhase.AfterRestored);
