@@ -7,12 +7,12 @@
 import { useAccessor, useActiveURI, useIsDark, useSettingsState } from '../util/services.js';
 
 import '../styles.css'
-import { VOID_CTRL_K_ACTION_ID, VOID_CTRL_L_ACTION_ID } from '../../../actionIDs.js';
+import { LOOPHOLE_CTRL_K_ACTION_ID, LOOPHOLE_CTRL_L_ACTION_ID } from '../../../actionIDs.js';
 import { Circle, MoreVertical } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 import { LoopholeSelectionHelperProps } from '../../../../../../contrib/void/browser/voidSelectionHelperWidget.js';
-import { VOID_OPEN_SETTINGS_ACTION_ID } from '../../../voidSettingsPane.js';
+import { LOOPHOLE_OPEN_SETTINGS_ACTION_ID } from '../../../voidSettingsPane.js';
 
 
 export const LoopholeSelectionHelperMain = (props: LoopholeSelectionHelperProps) => {
@@ -22,21 +22,21 @@ export const LoopholeSelectionHelperMain = (props: LoopholeSelectionHelperProps)
 	return <div
 		className={`@@loophole-scope ${isDark ? 'dark' : ''}`}
 	>
-		<VoidSelectionHelper {...props} />
+		<LoopholeSelectionHelper {...props} />
 	</div>
 }
 
 
 
-const VoidSelectionHelper = ({ rerenderKey }: LoopholeSelectionHelperProps) => {
+const LoopholeSelectionHelper = ({ rerenderKey }: LoopholeSelectionHelperProps) => {
 
 
 	const accessor = useAccessor()
 	const keybindingService = accessor.get('IKeybindingService')
 	const commandService = accessor.get('ICommandService')
 
-	const ctrlLKeybind = keybindingService.lookupKeybinding(VOID_CTRL_L_ACTION_ID)
-	const ctrlKKeybind = keybindingService.lookupKeybinding(VOID_CTRL_K_ACTION_ID)
+	const ctrlLKeybind = keybindingService.lookupKeybinding(LOOPHOLE_CTRL_L_ACTION_ID)
+	const ctrlKKeybind = keybindingService.lookupKeybinding(LOOPHOLE_CTRL_K_ACTION_ID)
 
 	const dividerHTML = <div className='w-[0.5px] bg-loophole-border-3'></div>
 
@@ -45,7 +45,7 @@ const VoidSelectionHelper = ({ rerenderKey }: LoopholeSelectionHelperProps) => {
 
 	useEffect(() => {
 		const disposable = commandService.onWillExecuteCommand(e => {
-			if (e.commandId === VOID_CTRL_L_ACTION_ID || e.commandId === VOID_CTRL_K_ACTION_ID) {
+			if (e.commandId === LOOPHOLE_CTRL_L_ACTION_ID || e.commandId === LOOPHOLE_CTRL_K_ACTION_ID) {
 				setClickState('clickedOption')
 			}
 		});
@@ -79,7 +79,7 @@ const VoidSelectionHelper = ({ rerenderKey }: LoopholeSelectionHelperProps) => {
 					cursor-pointer
 				'
 				onClick={() => {
-					commandService.executeCommand(VOID_CTRL_L_ACTION_ID)
+					commandService.executeCommand(LOOPHOLE_CTRL_L_ACTION_ID)
 					setClickState('clickedOption');
 				}}
 			>
@@ -99,7 +99,7 @@ const VoidSelectionHelper = ({ rerenderKey }: LoopholeSelectionHelperProps) => {
 					cursor-pointer
 				'
 				onClick={() => {
-					commandService.executeCommand(VOID_CTRL_K_ACTION_ID)
+					commandService.executeCommand(LOOPHOLE_CTRL_K_ACTION_ID)
 					setClickState('clickedOption');
 				}}
 			>
@@ -133,7 +133,7 @@ const VoidSelectionHelper = ({ rerenderKey }: LoopholeSelectionHelperProps) => {
 				cursor-pointer
 			'
 			onClick={() => {
-				commandService.executeCommand(VOID_OPEN_SETTINGS_ACTION_ID);
+				commandService.executeCommand(LOOPHOLE_OPEN_SETTINGS_ACTION_ID);
 				setClickState('clickedOption');
 			}}
 		>
