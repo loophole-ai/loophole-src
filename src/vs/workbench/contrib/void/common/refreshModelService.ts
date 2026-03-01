@@ -3,7 +3,7 @@
  *  Licensed under the Apache License, Version 2.0. See LICENSE.txt for more information.
  *--------------------------------------------------------------------------------------*/
 
-import { IVoidSettingsService } from './voidSettingsService.js';
+import { ILoopholeSettingsService } from './voidSettingsService.js';
 import { ILLMMessageService } from './sendLLMMessageService.js';
 import { Emitter, Event } from '../../../../base/common/event.js';
 import { Disposable, IDisposable } from '../../../../base/common/lifecycle.js';
@@ -80,7 +80,7 @@ export class RefreshModelService extends Disposable implements IRefreshModelServ
 
 
 	constructor(
-		@IVoidSettingsService private readonly voidSettingsService: IVoidSettingsService,
+		@ILoopholeSettingsService private readonly voidSettingsService: ILoopholeSettingsService,
 		@ILLMMessageService private readonly llmMessageService: ILLMMessageService,
 	) {
 		super()
@@ -134,7 +134,7 @@ export class RefreshModelService extends Disposable implements IRefreshModelServ
 		voidSettingsService.waitForInitState.then(() => {
 			initializeAutoPollingAndOnChange()
 			this._register(
-				voidSettingsService.onDidChangeState((type) => { if (typeof type === 'object' && type[1] === 'autoRefreshModels') initializeAutoPollingAndOnChange() })
+				voidSettingsService.onDidChangeState((type: any) => { if (typeof type === 'object' && type[1] === 'autoRefreshModels') initializeAutoPollingAndOnChange() })
 			)
 		})
 

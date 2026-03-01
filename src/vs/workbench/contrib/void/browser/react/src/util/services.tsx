@@ -20,7 +20,7 @@ import { IHoverService } from '../../../../../../../platform/hover/browser/hover
 import { IThemeService } from '../../../../../../../platform/theme/common/themeService.js';
 import { ILLMMessageService } from '../../../../common/sendLLMMessageService.js';
 import { IRefreshModelService } from '../../../../../../../workbench/contrib/void/common/refreshModelService.js';
-import { IVoidSettingsService } from '../../../../../../../workbench/contrib/void/common/voidSettingsService.js';
+import { ILoopholeSettingsService, LoopholeSettingsState } from '../../../../../../../workbench/contrib/void/common/voidSettingsService.js';
 import { IExtensionTransferService } from '../../../../../../../workbench/contrib/void/browser/extensionTransferService.js'
 
 import { IInstantiationService } from '../../../../../../../platform/instantiation/common/instantiation.js'
@@ -41,9 +41,9 @@ import { URI } from '../../../../../../../base/common/uri.js'
 import { IChatThreadService, ThreadsState, ThreadStreamState } from '../../../chatThreadService.js'
 import { ITerminalToolService } from '../../../terminalToolService.js'
 import { ILanguageService } from '../../../../../../../editor/common/languages/language.js'
-import { IVoidModelService } from '../../../../common/voidModelService.js'
+import { ILoopholeModelService } from '../../../../common/voidModelService.js'
 import { IWorkspaceContextService } from '../../../../../../../platform/workspace/common/workspace.js'
-import { IVoidCommandBarService } from '../../../voidCommandBarService.js'
+import { ILoopholeCommandBarService } from '../../../voidCommandBarService.js'
 import { INativeHostService } from '../../../../../../../platform/native/common/native.js';
 import { IEditCodeService } from '../../../editCodeServiceInterface.js'
 import { IToolsService } from '../../../toolsService.js'
@@ -67,8 +67,8 @@ const chatThreadsStateListeners: Set<(s: ThreadsState) => void> = new Set()
 let chatThreadsStreamState: ThreadStreamState
 const chatThreadsStreamStateListeners: Set<(threadId: string) => void> = new Set()
 
-let settingsState: VoidSettingsState
-const settingsStateListeners: Set<(s: VoidSettingsState) => void> = new Set()
+let settingsState: LoopholeSettingsState
+const settingsStateListeners: Set<(s: LoopholeSettingsState) => void> = new Set()
 
 let refreshModelState: RefreshModelStateOfProvider
 const refreshModelStateListeners: Set<(s: RefreshModelStateOfProvider) => void> = new Set()
@@ -94,11 +94,11 @@ export const _registerServices = (accessor: ServicesAccessor) => {
 
 	const stateServices = {
 		chatThreadsStateService: accessor.get(IChatThreadService),
-		settingsStateService: accessor.get(IVoidSettingsService),
+		settingsStateService: accessor.get(ILoopholeSettingsService),
 		refreshModelService: accessor.get(IRefreshModelService),
 		themeService: accessor.get(IThemeService),
 		editCodeService: accessor.get(IEditCodeService),
-		voidCommandBarService: accessor.get(IVoidCommandBarService),
+		voidCommandBarService: accessor.get(ILoopholeCommandBarService),
 		modelService: accessor.get(IModelService),
 		mcpService: accessor.get(IMCPService),
 	}
@@ -193,7 +193,7 @@ const getReactAccessor = (accessor: ServicesAccessor) => {
 		IThemeService: accessor.get(IThemeService),
 		ILLMMessageService: accessor.get(ILLMMessageService),
 		IRefreshModelService: accessor.get(IRefreshModelService),
-		IVoidSettingsService: accessor.get(IVoidSettingsService),
+		ILoopholeSettingsService: accessor.get(ILoopholeSettingsService),
 		IEditCodeService: accessor.get(IEditCodeService),
 		IChatThreadService: accessor.get(IChatThreadService),
 
@@ -216,10 +216,10 @@ const getReactAccessor = (accessor: ServicesAccessor) => {
 		IMetricsService: accessor.get(IMetricsService),
 		ITerminalToolService: accessor.get(ITerminalToolService),
 		ILanguageService: accessor.get(ILanguageService),
-		IVoidModelService: accessor.get(IVoidModelService),
+		ILoopholeModelService: accessor.get(ILoopholeModelService),
 		IWorkspaceContextService: accessor.get(IWorkspaceContextService),
 
-		IVoidCommandBarService: accessor.get(IVoidCommandBarService),
+		ILoopholeCommandBarService: accessor.get(ILoopholeCommandBarService),
 		INativeHostService: accessor.get(INativeHostService),
 		IToolsService: accessor.get(IToolsService),
 		IConvertToLLMMessageService: accessor.get(IConvertToLLMMessageService),
@@ -363,7 +363,7 @@ export const useCommandBarURIListener = (listener: (uri: URI) => void) => {
 };
 export const useCommandBarState = () => {
 	const accessor = useAccessor()
-	const commandBarService = accessor.get('IVoidCommandBarService')
+	const commandBarService = accessor.get('ILoopholeCommandBarService')
 	const [s, ss] = useState({ stateOfURI: commandBarService.stateOfURI, sortedURIs: commandBarService.sortedURIs });
 	const listener = useCallback(() => {
 		ss({ stateOfURI: commandBarService.stateOfURI, sortedURIs: commandBarService.sortedURIs });
@@ -378,7 +378,7 @@ export const useCommandBarState = () => {
 // roughly gets the active URI - this is used to get the history of recent URIs
 export const useActiveURI = () => {
 	const accessor = useAccessor()
-	const commandBarService = accessor.get('IVoidCommandBarService')
+	const commandBarService = accessor.get('ILoopholeCommandBarService')
 	const [s, ss] = useState(commandBarService.activeURI)
 	useEffect(() => {
 		const listener = () => { ss(commandBarService.activeURI) }
