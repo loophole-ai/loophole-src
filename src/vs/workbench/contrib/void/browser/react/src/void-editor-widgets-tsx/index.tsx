@@ -7,7 +7,7 @@ import { mountFnGenerator } from '../util/mountFnGenerator.js'
 import { LoopholeCommandBarMain } from './VoidCommandBar.js'
 import { LoopholeSelectionHelperMain } from './VoidSelectionHelper.js'
 
-export const mountVoidCommandBar = mountFnGenerator(LoopholeCommandBarMain)
+export const mountLoopholeCommandBar = mountFnGenerator(LoopholeCommandBarMain)
 
-export const mountVoidSelectionHelper = mountFnGenerator(LoopholeSelectionHelperMain)
+export const mountLoopholeSelectionHelper = mountFnGenerator(LoopholeSelectionHelperMain)
 

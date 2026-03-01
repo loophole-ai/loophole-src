@@ -84,7 +84,7 @@ registerAction2(class extends Action2 {
 			title: localize2('loopholeCmdL', 'Loophole: Add Selection to Chat'),
 			keybinding: {
 				primary: KeyMod.CtrlCmd | KeyCode.KeyL,
-				weight: KeybindingWeight.VoidExtension
+				weight: KeybindingWeight.LoopholeExtension
 			}
 		});
 	}
@@ -152,7 +152,7 @@ registerAction2(class extends Action2 {
 			title: 'New Chat',
 			keybinding: {
 				primary: KeyMod.CtrlCmd | KeyMod.Shift | KeyCode.KeyL,
-				weight: KeybindingWeight.VoidExtension,
+				weight: KeybindingWeight.LoopholeExtension,
 			},
 			icon: { id: 'add' },
 			menu: [{ id: MenuId.ViewTitle, group: 'navigation', when: ContextKeyExpr.equals('view', LOOPHOLE_VIEW_ID), }],

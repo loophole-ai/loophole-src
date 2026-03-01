@@ -7,20 +7,20 @@ import { IFileService } from '../../../../platform/files/common/files.js';
 import { IClipboardService } from '../../../../platform/clipboard/common/clipboardService.js';
 import { IDirectoryStrService } from '../common/directoryStrService.js';
 import { messageOfSelection } from '../common/prompt/prompts.js';
-import { IVoidModelService } from '../common/voidModelService.js';
+import { ILoopholeModelService } from '../common/voidModelService.js';
 
 
 
 class FilePromptActionService extends Action2 {
-	private static readonly VOID_COPY_FILE_PROMPT_ID = 'void.copyfileprompt'
+	private static readonly LOOPHOLE_COPY_FILE_PROMPT_ID = 'loophole.copyfileprompt'
 
 	constructor() {
 		super({
-			id: FilePromptActionService.VOID_COPY_FILE_PROMPT_ID,
-			title: localize2('voidCopyPrompt', 'Void: Copy Prompt'),
+			id: FilePromptActionService.LOOPHOLE_COPY_FILE_PROMPT_ID,
+			title: localize2('loopholeCopyPrompt', 'Loophole: Copy Prompt'),
 			menu: [{
 				id: MenuId.ExplorerContext,
-				group: '8_void',
+				group: '8_loophole',
 				order: 1,
 			}]
 		});
@@ -31,7 +31,7 @@ class FilePromptActionService extends Action2 {
 			const fileService = accessor.get(IFileService);
 			const clipboardService = accessor.get(IClipboardService)
 			const directoryStrService = accessor.get(IDirectoryStrService)
-			const voidModelService = accessor.get(IVoidModelService)
+			const loopholeModelService = accessor.get(ILoopholeModelService)
 
 			const stat = await fileService.stat(uri)
 
@@ -45,7 +45,7 @@ class FilePromptActionService extends Action2 {
 				m = await messageOfSelection({
 					type: 'File',
 					uri,
-					language: (await voidModelService.getModelSafe(uri)).model?.getLanguageId() || '',
+					language: (await loopholeModelService.getModelSafe(uri)).model?.getLanguageId() || '',
 					state: { wasAddedAsCurrentFile: false, },
 				}, {
 					folderOpts,

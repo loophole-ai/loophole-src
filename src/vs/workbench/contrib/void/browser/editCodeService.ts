@@ -23,10 +23,10 @@ import * as dom from '../../../../base/browser/dom.js';
 import { Widget } from '../../../../base/browser/ui/widget.js';
 import { URI } from '../../../../base/common/uri.js';
 import { IConsistentEditorItemService, IConsistentItemService } from './helperServices/consistentItemService.js';
-import { voidPrefixAndSuffix, ctrlKStream_userMessage, ctrlKStream_systemMessage, defaultQuickEditFimTags, rewriteCode_systemMessage, rewriteCode_userMessage, searchReplaceGivenDescription_systemMessage, searchReplaceGivenDescription_userMessage, tripleTick, } from '../common/prompt/prompts.js';
-import { IVoidCommandBarService } from './voidCommandBarService.js';
+import { loopholePrefixAndSuffix, ctrlKStream_userMessage, ctrlKStream_systemMessage, defaultQuickEditFimTags, rewriteCode_systemMessage, rewriteCode_userMessage, searchReplaceGivenDescription_systemMessage, searchReplaceGivenDescription_userMessage, tripleTick, } from '../common/prompt/prompts.js';
+import { ILoopholeCommandBarService } from './voidCommandBarService.js';
 import { IKeybindingService } from '../../../../platform/keybinding/common/keybinding.js';
-import { VOID_ACCEPT_DIFF_ACTION_ID, VOID_REJECT_DIFF_ACTION_ID } from './actionIDs.js';
+import { LOOPHOLE_ACCEPT_DIFF_ACTION_ID, LOOPHOLE_REJECT_DIFF_ACTION_ID } from './actionIDs.js';
 
 import { mountCtrlK } from './react/out/quick-edit-tsx/index.js'
 import { QuickEditPropsType } from './quickEditActions.js';
@@ -39,9 +39,9 @@ import { ILLMMessageService } from '../common/sendLLMMessageService.js';
 import { LLMChatMessage } from '../common/sendLLMMessageTypes.js';
 import { IMetricsService } from '../common/metricsService.js';
 import { IEditCodeService, AddCtrlKOpts, StartApplyingOpts, CallBeforeStartApplyingOpts, } from './editCodeServiceInterface.js';
-import { IVoidSettingsService } from '../common/voidSettingsService.js';
+import { ILoopholeSettingsService } from '../common/voidSettingsService.js';
 import { FeatureName } from '../common/voidSettingsTypes.js';
-import { IVoidModelService } from '../common/voidModelService.js';
+import { ILoopholeModelService } from '../common/voidModelService.js';
 import { deepClone } from '../../../../base/common/objects.js';
 import { acceptBg, acceptBorder, buttonFontSize, buttonTextColor, rejectBg, rejectBorder } from '../common/helpers/colors.js';
 import { DiffArea, Diff, CtrlKZone, VoidFileSnapshot, DiffAreaSnapshotEntry, diffAreaSnapshotKeys, DiffZone, TrackingZone, ComputedDiff } from '../common/editCodeServiceTypes.js';
@@ -192,9 +192,9 @@ class EditCodeService extends Disposable implements IEditCodeService {
 		@IMetricsService private readonly _metricsService: IMetricsService,
 		@INotificationService private readonly _notificationService: INotificationService,
 		// @ICommandService private readonly _commandService: ICommandService,
-		@IVoidSettingsService private readonly _settingsService: IVoidSettingsService,
+		@ILoopholeSettingsService private readonly _settingsService: ILoopholeSettingsService,
 		// @IFileService private readonly _fileService: IFileService,
-		@IVoidModelService private readonly _voidModelService: IVoidModelService,
+		@ILoopholeModelService private readonly _loopholeModelService: ILoopholeModelService,
 		@IConvertToLLMMessageService private readonly _convertToLLMMessageService: IConvertToLLMMessageService,
 	) {
 		super();
@@ -203,7 +203,7 @@ class EditCodeService extends Disposable implements IEditCodeService {
 		const registeredModelURIs = new Set<string>()
 		const initializeModel = async (model: ITextModel) => {
 
-			await this._voidModelService.initializeModel(model.uri)
+			await this._loopholeModelService.initializeModel(model.uri)
 
 			// do not add listeners to the same model twice - important, or will see duplicates
 			if (registeredModelURIs.has(model.uri.fsPath)) return
@@ -315,7 +315,7 @@ class EditCodeService extends Disposable implements IEditCodeService {
 
 
 	private _addDiffAreaStylesToURI = (uri: URI) => {
-		const { model } = this._voidModelService.getModel(uri)
+		const { model } = this._loopholeModelService.getModel(uri)
 
 		for (const diffareaid of this.diffAreasOfURI[uri.fsPath] || []) {
 			const diffArea = this.diffAreaOfId[diffareaid]
@@ -324,10 +324,10 @@ class EditCodeService extends Disposable implements IEditCodeService {
 				// add sweep styles to the diffZone
 				if (diffArea._streamState.isStreaming) {
 					// sweepLine ... sweepLine
-					const fn1 = this._addLineDecoration(model, diffArea._streamState.line, diffArea._streamState.line, 'void-sweepIdxBG')
+					const fn1 = this._addLineDecoration(model, diffArea._streamState.line, diffArea._streamState.line, 'loophole-sweepIdxBG')
 					// sweepLine+1 ... endLine
 					const fn2 = diffArea._streamState.line + 1 <= diffArea.endLine ?
-						this._addLineDecoration(model, diffArea._streamState.line + 1, diffArea.endLine, 'void-sweepBG')
+						this._addLineDecoration(model, diffArea._streamState.line + 1, diffArea.endLine, 'loophole-sweepBG')
 						: null
 					diffArea._removeStylesFns.add(() => { fn1?.(); fn2?.(); })
 
@@ -336,7 +336,7 @@ class EditCodeService extends Disposable implements IEditCodeService {
 
 			else if (diffArea.type === 'CtrlKZone' && diffArea._linkedStreamingDiffZone === null) {
 				// highlight zone's text
-				const fn = this._addLineDecoration(model, diffArea.startLine, diffArea.endLine, 'void-highlightBG')
+				const fn = this._addLineDecoration(model, diffArea.startLine, diffArea.endLine, 'loophole-highlightBG')
 				diffArea._removeStylesFns.add(() => fn?.());
 			}
 		}
@@ -344,7 +344,7 @@ class EditCodeService extends Disposable implements IEditCodeService {
 
 
 	private _computeDiffsAndAddStylesToURI = (uri: URI) => {
-		const { model } = this._voidModelService.getModel(uri)
+		const { model } = this._loopholeModelService.getModel(uri)
 		if (model === null) return
 		const fullFileText = model.getValue(EndOfLinePreference.LF)
 
@@ -477,11 +477,11 @@ class EditCodeService extends Disposable implements IEditCodeService {
 
 		const disposeInThisEditorFns: (() => void)[] = []
 
-		const { model } = this._voidModelService.getModel(uri)
+		const { model } = this._loopholeModelService.getModel(uri)
 
 		// green decoration and minimap decoration
 		if (type !== 'deletion') {
-			const fn = this._addLineDecoration(model, diff.startLine, diff.endLine, 'void-greenBG', {
+			const fn = this._addLineDecoration(model, diff.startLine, diff.endLine, 'loophole-greenBG', {
 				minimap: { color: { id: 'minimapGutter.addedBackground' }, position: 2 },
 				overviewRuler: { color: { id: 'editorOverviewRuler.addedForeground' }, position: 7 }
 			})
@@ -496,7 +496,7 @@ class EditCodeService extends Disposable implements IEditCodeService {
 				fn: (editor) => {
 
 					const domNode = document.createElement('div');
-					domNode.className = 'void-redBG'
+					domNode.className = 'loophole-redBG'
 
 					const renderOptions = RenderOptions.fromEditor(editor)
 
@@ -625,7 +625,7 @@ class EditCodeService extends Disposable implements IEditCodeService {
 
 	weAreWriting = false
 	private _writeURIText(uri: URI, text: string, range_: IRange | 'wholeFileRange', { shouldRealignDiffAreas, }: { shouldRealignDiffAreas: boolean, }) {
-		const { model } = this._voidModelService.getModel(uri)
+		const { model } = this._loopholeModelService.getModel(uri)
 		if (!model) {
 			this._refreshStylesAndDiffsInURI(uri) // at the end of a write, we still expect to refresh all styles. e.g. sometimes we expect to restore all the decorations even if no edits were made when _writeText is used
 			return
@@ -664,7 +664,7 @@ class EditCodeService extends Disposable implements IEditCodeService {
 
 
 	private _getCurrentVoidFileSnapshot = (uri: URI): VoidFileSnapshot => {
-		const { model } = this._voidModelService.getModel(uri)
+		const { model } = this._loopholeModelService.getModel(uri)
 		const snapshottedDiffAreaOfId: Record<string, DiffAreaSnapshotEntry> = {}
 
 		for (const diffareaid in this.diffAreaOfId) {
@@ -743,7 +743,7 @@ class EditCodeService extends Disposable implements IEditCodeService {
 		const elt: IUndoRedoElement = {
 			type: UndoRedoElementType.Resource,
 			resource: uri,
-			label: 'Void Agent',
+			label: 'Loophole Agent',
 			code: 'undoredo.editCode',
 			undo: async () => { opts?.onWillUndo?.(); await this._restoreVoidFileSnapshot(uri, beforeSnapshot) },
 			redo: async () => { if (afterSnapshot) await this._restoreVoidFileSnapshot(uri, afterSnapshot) }
@@ -752,7 +752,7 @@ class EditCodeService extends Disposable implements IEditCodeService {
 
 		const onFinishEdit = async () => {
 			afterSnapshot = this._getCurrentVoidFileSnapshot(uri)
-			await this._voidModelService.saveModel(uri)
+			await this._loopholeModelService.saveModel(uri)
 		}
 		return { onFinishEdit }
 	}
@@ -1127,8 +1127,8 @@ class EditCodeService extends Disposable implements IEditCodeService {
 	public async callBeforeApplyOrEdit(givenURI: URI | 'current') {
 		const uri = this._uriOfGivenURI(givenURI)
 		if (!uri) return
-		await this._voidModelService.initializeModel(uri)
-		await this._voidModelService.saveModel(uri) // save the URI
+		await this._loopholeModelService.initializeModel(uri)
+		await this._loopholeModelService.saveModel(uri) // save the URI
 	}
 
 
@@ -1269,7 +1269,7 @@ class EditCodeService extends Disposable implements IEditCodeService {
 		linkedCtrlKZone: CtrlKZone | null,
 		onWillUndo: () => void,
 	}) {
-		const { model } = this._voidModelService.getModel(uri)
+		const { model } = this._loopholeModelService.getModel(uri)
 		if (!model) return
 
 		// treat like full file, unless linkedCtrlKZone was provided in which case use its diff's range
@@ -1379,7 +1379,7 @@ class EditCodeService extends Disposable implements IEditCodeService {
 			throw new Error(`Void: diff.type not recognized on: ${from}`)
 		}
 
-		const { model } = this._voidModelService.getModel(uri)
+		const { model } = this._loopholeModelService.getModel(uri)
 		if (!model) return
 
 		let streamRequestIdRef: { current: string | null } = { current: null } // can use this as a proxy to set the diffArea's stream state requestId
@@ -1408,7 +1408,7 @@ class EditCodeService extends Disposable implements IEditCodeService {
 
 			const startLine = startRange === 'fullFile' ? 1 : startRange[0]
 			const endLine = startRange === 'fullFile' ? model.getLineCount() : startRange[1]
-			const { prefix, suffix } = voidPrefixAndSuffix({ fullFileStr: originalFileCode, startLine, endLine })
+			const { prefix, suffix } = loopholePrefixAndSuffix({ fullFileStr: originalFileCode, startLine, endLine })
 			const userContent = ctrlKStream_userMessage({ selection: originalCode, instructions: instructions, prefix, suffix, fimTags: quickEditFIMTags, language })
 
 			const { messages: a, separateSystemMessage: b } = this._convertToLLMMessageService.prepareLLMSimpleMessages({
@@ -1578,7 +1578,7 @@ class EditCodeService extends Disposable implements IEditCodeService {
 	_fileLengthOfGivenURI(givenURI: URI | 'current') {
 		const uri = this._uriOfGivenURI(givenURI)
 		if (!uri) return null
-		const { model } = this._voidModelService.getModel(uri)
+		const { model } = this._loopholeModelService.getModel(uri)
 		if (!model) return null
 		const numCharsInFile = model.getValueLength(EndOfLinePreference.LF)
 		return numCharsInFile
@@ -1617,7 +1617,7 @@ class EditCodeService extends Disposable implements IEditCodeService {
 		const blocks = extractSearchReplaceBlocks(blocksStr)
 		if (blocks.length === 0) throw new Error(`No Search/Replace blocks were received!`)
 
-		const { model } = this._voidModelService.getModel(uri)
+		const { model } = this._loopholeModelService.getModel(uri)
 		if (!model) throw new Error(`Error applying Search/Replace blocks: File does not exist.`)
 		const modelStr = model.getValue(EndOfLinePreference.LF)
 		// .split('\n').map(l => '\t' + l).join('\n') // for testing purposes only, remember to remove this
@@ -1678,7 +1678,7 @@ class EditCodeService extends Disposable implements IEditCodeService {
 		const uri = this._getURIBeforeStartApplying(opts)
 		if (!uri) return
 
-		const { model } = this._voidModelService.getModel(uri)
+		const { model } = this._loopholeModelService.getModel(uri)
 		if (!model) return
 
 		let streamRequestIdRef: { current: string | null } = { current: null } // can use this as a proxy to set the diffArea's stream state requestId
@@ -2305,7 +2305,7 @@ class AcceptRejectInlineWidget extends Widget implements IOverlayWidget {
 			startLine: number,
 			offsetLines: number
 		},
-		@IVoidCommandBarService private readonly _voidCommandBarService: IVoidCommandBarService,
+		@ILoopholeCommandBarService private readonly _loopholeCommandBarService: ILoopholeCommandBarService,
 		@IKeybindingService private readonly _keybindingService: IKeybindingService,
 		@IEditCodeService private readonly _editCodeService: IEditCodeService,
 	) {
@@ -2328,15 +2328,15 @@ class AcceptRejectInlineWidget extends Widget implements IOverlayWidget {
 		const lineHeight = editor.getOption(EditorOption.lineHeight);
 
 		const getAcceptRejectText = () => {
-			const acceptKeybinding = this._keybindingService.lookupKeybinding(VOID_ACCEPT_DIFF_ACTION_ID);
-			const rejectKeybinding = this._keybindingService.lookupKeybinding(VOID_REJECT_DIFF_ACTION_ID);
+			const acceptKeybinding = this._keybindingService.lookupKeybinding(LOOPHOLE_ACCEPT_DIFF_ACTION_ID);
+			const rejectKeybinding = this._keybindingService.lookupKeybinding(LOOPHOLE_REJECT_DIFF_ACTION_ID);
 
 			// Use the standalone function directly since we're in a nested class that
 			// can't access EditCodeService's methods
 			const acceptKeybindLabel = this._editCodeService.processRawKeybindingText(acceptKeybinding && acceptKeybinding.getLabel() || '');
 			const rejectKeybindLabel = this._editCodeService.processRawKeybindingText(rejectKeybinding && rejectKeybinding.getLabel() || '');
 
-			const commandBarStateAtUri = this._voidCommandBarService.stateOfURI[uri.fsPath];
+			const commandBarStateAtUri = this._loopholeCommandBarService.stateOfURI[uri.fsPath];
 			const selectedDiffIdx = commandBarStateAtUri?.diffIdx ?? 0; // 0th item is selected by default
 			const thisDiffIdx = commandBarStateAtUri?.sortedDiffIds.indexOf(diffid) ?? null;
 
@@ -2434,8 +2434,8 @@ class AcceptRejectInlineWidget extends Widget implements IOverlayWidget {
 		this._register(editor.onDidLayoutChange(e => { updateTop(); updateLeft() }))
 
 
-		// Listen for state changes in the command bar service
-		this._register(this._voidCommandBarService.onDidChangeState(e => {
+		// Listen for state changes in the loophole command bar service
+		this._register(this._loopholeCommandBarService.onDidChangeState(e => {
 			if (uri && e.uri.fsPath === uri.fsPath) {
 
 				const { acceptText, rejectText } = getAcceptRejectText()

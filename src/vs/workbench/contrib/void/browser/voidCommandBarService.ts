@@ -19,7 +19,7 @@ import { ITextModel } from '../../../../editor/common/model.js';
 import { IModelService } from '../../../../editor/common/services/model.js';
 import { generateUuid } from '../../../../base/common/uuid.js';
 import { Action2, registerAction2 } from '../../../../platform/actions/common/actions.js';
-import { VOID_ACCEPT_DIFF_ACTION_ID, VOID_REJECT_DIFF_ACTION_ID, VOID_GOTO_NEXT_DIFF_ACTION_ID, VOID_GOTO_PREV_DIFF_ACTION_ID, VOID_GOTO_NEXT_URI_ACTION_ID, VOID_GOTO_PREV_URI_ACTION_ID, VOID_ACCEPT_FILE_ACTION_ID, VOID_REJECT_FILE_ACTION_ID, VOID_ACCEPT_ALL_DIFFS_ACTION_ID, VOID_REJECT_ALL_DIFFS_ACTION_ID } from './actionIDs.js';
+import { LOOPHOLE_ACCEPT_DIFF_ACTION_ID, LOOPHOLE_REJECT_DIFF_ACTION_ID, LOOPHOLE_GOTO_NEXT_DIFF_ACTION_ID, LOOPHOLE_GOTO_PREV_DIFF_ACTION_ID, LOOPHOLE_GOTO_NEXT_URI_ACTION_ID, LOOPHOLE_GOTO_PREV_URI_ACTION_ID, LOOPHOLE_ACCEPT_FILE_ACTION_ID, LOOPHOLE_REJECT_FILE_ACTION_ID, LOOPHOLE_ACCEPT_ALL_DIFFS_ACTION_ID, LOOPHOLE_REJECT_ALL_DIFFS_ACTION_ID } from './actionIDs.js';
 import { localize2 } from '../../../../nls.js';
 import { KeybindingWeight } from '../../../../platform/keybinding/common/keybindingsRegistry.js';
 import { ServicesAccessor } from '../../../../editor/browser/editorExtensions.js';
@@ -27,7 +27,7 @@ import { IMetricsService } from '../common/metricsService.js';
 import { KeyMod } from '../../../../editor/common/services/editorBaseApi.js';
 import { KeyCode } from '../../../../base/common/keyCodes.js';
 import { ScrollType } from '../../../../editor/common/editorCommon.js';
-import { IVoidModelService } from '../common/voidModelService.js';
+import { ILoopholeModelService } from '../common/voidModelService.js';
 
 
 
@@ -54,7 +54,7 @@ export interface ILoopholeCommandBarService {
 }
 
 
-export const ILoopholeCommandBarService = createDecorator<ILoopholeCommandBarService>('VoidCommandBarService');
+export const ILoopholeCommandBarService = createDecorator<ILoopholeCommandBarService>('loopholeCommandBarService');
 
 
 export type CommandBarStateType = undefined | {
@@ -75,10 +75,10 @@ const defaultState: NonNullable<CommandBarStateType> = {
 }
 
 
-export class VoidCommandBarService extends Disposable implements ILoopholeCommandBarService {
+export class LoopholeCommandBarService extends Disposable implements ILoopholeCommandBarService {
 	_serviceBrand: undefined;
 
-	static readonly ID: 'void.VoidCommandBarService'
+	static readonly ID: 'loophole.LoopholeCommandBarService'
 
 	// depends on uri -> diffZone -> {streaming, diffs}
 	public stateOfURI: { [uri: string]: CommandBarStateType } = {}
@@ -100,7 +100,7 @@ export class VoidCommandBarService extends Disposable implements ILoopholeComman
 		@ICodeEditorService private readonly _codeEditorService: ICodeEditorService,
 		@IModelService private readonly _modelService: IModelService,
 		@IEditCodeService private readonly _editCodeService: IEditCodeService,
-		@IVoidModelService private readonly _voidModelService: IVoidModelService,
+		@ILoopholeModelService private readonly _loopholeModelService: ILoopholeModelService,
 	) {
 		super();
 
@@ -460,7 +460,7 @@ export class VoidCommandBarService extends Disposable implements ILoopholeComman
 		if (!nextURI) return;
 
 		// Get the model for this URI
-		const { model } = await this._voidModelService.getModelSafe(nextURI);
+		const { model } = await this._loopholeModelService.getModelSafe(nextURI);
 		if (!model) return;
 
 		// Find an editor to use
@@ -488,7 +488,7 @@ export class VoidCommandBarService extends Disposable implements ILoopholeComman
 
 }
 
-registerSingleton(ILoopholeCommandBarService, VoidCommandBarService, InstantiationType.Delayed); // delayed is needed here :(
+registerSingleton(ILoopholeCommandBarService, LoopholeCommandBarService, InstantiationType.Delayed); // delayed is needed here :(
 
 
 export type LoopholeCommandBarProps = {
@@ -570,13 +570,13 @@ class AcceptRejectAllFloatingWidget extends Widget implements IOverlayWidget {
 registerAction2(class extends Action2 {
 	constructor() {
 		super({
-			id: VOID_ACCEPT_DIFF_ACTION_ID,
+			id: LOOPHOLE_ACCEPT_DIFF_ACTION_ID,
 			f1: true,
-			title: localize2('voidAcceptDiffAction', 'Loophole: Accept Diff'),
+			title: localize2('loopholeAcceptDiffAction', 'Loophole: Accept Diff'),
 			keybinding: {
 				primary: KeyMod.CtrlCmd | KeyMod.Alt | KeyMod.Shift | KeyCode.Enter,
 				mac: { primary: KeyMod.WinCtrl | KeyMod.Alt | KeyCode.Enter },
-				weight: KeybindingWeight.VoidExtension,
+				weight: KeybindingWeight.LoopholeExtension,
 			}
 		});
 	}
@@ -613,13 +613,13 @@ registerAction2(class extends Action2 {
 registerAction2(class extends Action2 {
 	constructor() {
 		super({
-			id: VOID_REJECT_DIFF_ACTION_ID,
+			id: LOOPHOLE_REJECT_DIFF_ACTION_ID,
 			f1: true,
-			title: localize2('voidRejectDiffAction', 'Loophole: Reject Diff'),
+			title: localize2('loopholeRejectDiffAction', 'Loophole: Reject Diff'),
 			keybinding: {
 				primary: KeyMod.CtrlCmd | KeyMod.Alt | KeyMod.Shift | KeyCode.Backspace,
 				mac: { primary: KeyMod.WinCtrl | KeyMod.Alt | KeyCode.Backspace },
-				weight: KeybindingWeight.VoidExtension,
+				weight: KeybindingWeight.LoopholeExtension,
 			}
 		});
 	}
@@ -654,13 +654,13 @@ registerAction2(class extends Action2 {
 registerAction2(class extends Action2 {
 	constructor() {
 		super({
-			id: VOID_GOTO_NEXT_DIFF_ACTION_ID,
+			id: LOOPHOLE_GOTO_NEXT_DIFF_ACTION_ID,
 			f1: true,
-			title: localize2('voidGoToNextDiffAction', 'Loophole: Go to Next Diff'),
+			title: localize2('loopholeGoToNextDiffAction', 'Loophole: Go to Next Diff'),
 			keybinding: {
 				primary: KeyMod.CtrlCmd | KeyMod.Alt | KeyMod.Shift | KeyCode.DownArrow,
 				mac: { primary: KeyMod.WinCtrl | KeyMod.Alt | KeyCode.DownArrow },
-				weight: KeybindingWeight.VoidExtension,
+				weight: KeybindingWeight.LoopholeExtension,
 			}
 		});
 	}
@@ -681,13 +681,13 @@ registerAction2(class extends Action2 {
 registerAction2(class extends Action2 {
 	constructor() {
 		super({
-			id: VOID_GOTO_PREV_DIFF_ACTION_ID,
+			id: LOOPHOLE_GOTO_PREV_DIFF_ACTION_ID,
 			f1: true,
-			title: localize2('voidGoToPrevDiffAction', 'Loophole: Go to Previous Diff'),
+			title: localize2('loopholeGoToPrevDiffAction', 'Loophole: Go to Previous Diff'),
 			keybinding: {
 				primary: KeyMod.CtrlCmd | KeyMod.Alt | KeyMod.Shift | KeyCode.UpArrow,
 				mac: { primary: KeyMod.WinCtrl | KeyMod.Alt | KeyCode.UpArrow },
-				weight: KeybindingWeight.VoidExtension,
+				weight: KeybindingWeight.LoopholeExtension,
 			}
 		});
 	}
@@ -708,13 +708,13 @@ registerAction2(class extends Action2 {
 registerAction2(class extends Action2 {
 	constructor() {
 		super({
-			id: VOID_GOTO_NEXT_URI_ACTION_ID,
+			id: LOOPHOLE_GOTO_NEXT_URI_ACTION_ID,
 			f1: true,
-			title: localize2('voidGoToNextUriAction', 'Loophole: Go to Next File with Diffs'),
+			title: localize2('loopholeGoToNextUriAction', 'Loophole: Go to Next File with Diffs'),
 			keybinding: {
 				primary: KeyMod.CtrlCmd | KeyMod.Alt | KeyMod.Shift | KeyCode.RightArrow,
 				mac: { primary: KeyMod.WinCtrl | KeyMod.Alt | KeyCode.RightArrow },
-				weight: KeybindingWeight.VoidExtension,
+				weight: KeybindingWeight.LoopholeExtension,
 			}
 		});
 	}
@@ -735,13 +735,13 @@ registerAction2(class extends Action2 {
 registerAction2(class extends Action2 {
 	constructor() {
 		super({
-			id: VOID_GOTO_PREV_URI_ACTION_ID,
+			id: LOOPHOLE_GOTO_PREV_URI_ACTION_ID,
 			f1: true,
-			title: localize2('voidGoToPrevUriAction', 'Loophole: Go to Previous File with Diffs'),
+			title: localize2('loopholeGoToPrevUriAction', 'Loophole: Go to Previous File with Diffs'),
 			keybinding: {
 				primary: KeyMod.CtrlCmd | KeyMod.Alt | KeyMod.Shift | KeyCode.LeftArrow,
 				mac: { primary: KeyMod.WinCtrl | KeyMod.Alt | KeyCode.LeftArrow },
-				weight: KeybindingWeight.VoidExtension,
+				weight: KeybindingWeight.LoopholeExtension,
 			}
 		});
 	}
@@ -762,12 +762,12 @@ registerAction2(class extends Action2 {
 registerAction2(class extends Action2 {
 	constructor() {
 		super({
-			id: VOID_ACCEPT_FILE_ACTION_ID,
+			id: LOOPHOLE_ACCEPT_FILE_ACTION_ID,
 			f1: true,
-			title: localize2('voidAcceptFileAction', 'Loophole: Accept All Diffs in Current File'),
+			title: localize2('loopholeAcceptFileAction', 'Loophole: Accept All Diffs in Current File'),
 			keybinding: {
 				primary: KeyMod.Alt | KeyMod.Shift | KeyCode.Enter,
-				weight: KeybindingWeight.VoidExtension,
+				weight: KeybindingWeight.LoopholeExtension,
 			}
 		});
 	}
@@ -793,12 +793,12 @@ registerAction2(class extends Action2 {
 registerAction2(class extends Action2 {
 	constructor() {
 		super({
-			id: VOID_REJECT_FILE_ACTION_ID,
+			id: LOOPHOLE_REJECT_FILE_ACTION_ID,
 			f1: true,
-			title: localize2('voidRejectFileAction', 'Loophole: Reject All Diffs in Current File'),
+			title: localize2('loopholeRejectFileAction', 'Loophole: Reject All Diffs in Current File'),
 			keybinding: {
 				primary: KeyMod.Alt | KeyMod.Shift | KeyCode.Backspace,
-				weight: KeybindingWeight.VoidExtension,
+				weight: KeybindingWeight.LoopholeExtension,
 			}
 		});
 	}
@@ -824,12 +824,12 @@ registerAction2(class extends Action2 {
 registerAction2(class extends Action2 {
 	constructor() {
 		super({
-			id: VOID_ACCEPT_ALL_DIFFS_ACTION_ID,
+			id: LOOPHOLE_ACCEPT_ALL_DIFFS_ACTION_ID,
 			f1: true,
-			title: localize2('voidAcceptAllDiffsAction', 'Void: Accept All Diffs in All Files'),
+			title: localize2('loopholeAcceptAllDiffsAction', 'Loophole: Accept All Diffs in All Files'),
 			keybinding: {
 				primary: KeyMod.CtrlCmd | KeyMod.Shift | KeyCode.Enter,
-				weight: KeybindingWeight.VoidExtension,
+				weight: KeybindingWeight.LoopholeExtension,
 			}
 		});
 	}
@@ -849,12 +849,12 @@ registerAction2(class extends Action2 {
 registerAction2(class extends Action2 {
 	constructor() {
 		super({
-			id: VOID_REJECT_ALL_DIFFS_ACTION_ID,
+			id: LOOPHOLE_REJECT_ALL_DIFFS_ACTION_ID,
 			f1: true,
-			title: localize2('voidRejectAllDiffsAction', 'Void: Reject All Diffs in All Files'),
+			title: localize2('loopholeRejectAllDiffsAction', 'Loophole: Reject All Diffs in All Files'),
 			keybinding: {
 				primary: KeyMod.CtrlCmd | KeyMod.Shift | KeyCode.Backspace,
-				weight: KeybindingWeight.VoidExtension,
+				weight: KeybindingWeight.LoopholeExtension,
 			}
 		});
 	}
