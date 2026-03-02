@@ -24,6 +24,43 @@ const issPath = path.join(__dirname, 'win32', 'code.iss');
 const innoSetupPath = path.join(path.dirname(path.dirname(require.resolve('innosetup'))), 'bin', 'ISCC.exe');
 const signWin32Path = path.join(repoPath, 'build', 'azure-pipelines', 'common', 'sign-win32');
 
+// Ensure that the `tools` directory inside the build output contains the
+// Inno updater binary and any required DLL.  This step used to be executed
+// by a standalone gulp task, but we now run it as part of the setup build
+// so that packaging never proceeds when the files are missing.
+function ensureTools(arch, cb) {
+	const destDir = path.join(buildPath(arch), 'tools');
+	fs.mkdirSync(destDir, { recursive: true });
+
+	const icon = path.join(repoPath, 'resources', 'win32', 'code.ico');
+	const files = ['inno_updater.exe', 'vcruntime140.dll'];
+	let copied = 0;
+
+	files.forEach(f => {
+		const src = path.join(repoPath, 'build', 'win32', f);
+		if (fs.existsSync(src)) {
+			try {
+				fs.copyFileSync(src, path.join(destDir, f));
+			} catch (e) {
+				return cb(e);
+			}
+		} else {
+			console.warn(`ensureTools: missing source file ${src}`);
+		}
+		copied += 1;
+		if (copied === files.length) {
+			// attempt to update the icon if we managed to copy the updater
+			const exe = path.join(destDir, 'inno_updater.exe');
+			if (fs.existsSync(exe)) {
+				rcedit(exe, { icon }, cb);
+			} else {
+				cb(null);
+			}
+		}
+	});
+}
+
+
 function packageInnoSetup(iss, options, cb) {
 	options = options || {};
 
@@ -117,7 +154,16 @@ function buildWin32Setup(arch, target) {
 			definitions['AppxPackageFullname'] = `Microsoft.${product.win32RegValueName}_1.0.0.0_neutral__8wekyb3d8bbwe`;
 		}
 
-		packageInnoSetup(issPath, { definitions }, cb);
+		// make sure the updater DLLs exist before invoking InnoSetup.  this
+		// mirrors what the separate "inno-updater" task used to do, but it
+		// keeps the packaging step self-contained and avoids build failures
+		// when callers forget to run the helper task first.
+		ensureTools(arch, err => {
+			if (err) {
+				return cb(err);
+			}
+			packageInnoSetup(issPath, { definitions }, cb);
+		});
 	};
 }
 
@@ -127,8 +173,7 @@ function buildWin32Setup(arch, target) {
  */
 function defineWin32SetupTasks(arch, target) {
 	const cleanTask = util.rimraf(setupDir(arch, target));
-	const innoUpdaterTask = `vscode-win32-${arch}-inno-updater`;
-	gulp.task(task.define(`vscode-win32-${arch}-${target}-setup`, task.series(cleanTask, innoUpdaterTask, buildWin32Setup(arch, target))));
+	gulp.task(task.define(`vscode-win32-${arch}-${target}-setup`, task.series(cleanTask, buildWin32Setup(arch, target))));
 }
 
 defineWin32SetupTasks('x64', 'system');
