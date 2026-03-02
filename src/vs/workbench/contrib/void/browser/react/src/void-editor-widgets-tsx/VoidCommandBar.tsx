@@ -13,14 +13,14 @@ import { acceptAllBg, acceptBorder, buttonFontSize, buttonTextColor, rejectAllBg
 import { LoopholeCommandBarProps } from '../../../voidCommandBarService.js';
 import { Check, EllipsisVertical, Menu, MoveDown, MoveLeft, MoveRight, MoveUp, X } from 'lucide-react';
 import {
-	VOID_GOTO_NEXT_DIFF_ACTION_ID,
-	VOID_GOTO_PREV_DIFF_ACTION_ID,
-	VOID_GOTO_NEXT_URI_ACTION_ID,
-	VOID_GOTO_PREV_URI_ACTION_ID,
-	VOID_ACCEPT_FILE_ACTION_ID,
-	VOID_REJECT_FILE_ACTION_ID,
-	VOID_ACCEPT_ALL_DIFFS_ACTION_ID,
-	VOID_REJECT_ALL_DIFFS_ACTION_ID
+	LOOPHOLE_GOTO_NEXT_DIFF_ACTION_ID,
+	LOOPHOLE_GOTO_PREV_DIFF_ACTION_ID,
+	LOOPHOLE_GOTO_NEXT_URI_ACTION_ID,
+	LOOPHOLE_GOTO_PREV_URI_ACTION_ID,
+	LOOPHOLE_ACCEPT_FILE_ACTION_ID,
+	LOOPHOLE_REJECT_FILE_ACTION_ID,
+	LOOPHOLE_ACCEPT_ALL_DIFFS_ACTION_ID,
+	LOOPHOLE_REJECT_ALL_DIFFS_ACTION_ID
 } from '../../../actionIDs.js';
 
 export const LoopholeCommandBarMain = ({ uri, editor }: LoopholeCommandBarProps) => {
@@ -171,14 +171,14 @@ export const VoidCommandBar = ({ uri, editor }: LoopholeCommandBarProps) => {
 
 
 
-	const _upKeybinding = keybindingService.lookupKeybinding(VOID_GOTO_PREV_DIFF_ACTION_ID);
-	const _downKeybinding = keybindingService.lookupKeybinding(VOID_GOTO_NEXT_DIFF_ACTION_ID);
-	const _leftKeybinding = keybindingService.lookupKeybinding(VOID_GOTO_PREV_URI_ACTION_ID);
-	const _rightKeybinding = keybindingService.lookupKeybinding(VOID_GOTO_NEXT_URI_ACTION_ID);
-	const _acceptFileKeybinding = keybindingService.lookupKeybinding(VOID_ACCEPT_FILE_ACTION_ID);
-	const _rejectFileKeybinding = keybindingService.lookupKeybinding(VOID_REJECT_FILE_ACTION_ID);
-	const _acceptAllKeybinding = keybindingService.lookupKeybinding(VOID_ACCEPT_ALL_DIFFS_ACTION_ID);
-	const _rejectAllKeybinding = keybindingService.lookupKeybinding(VOID_REJECT_ALL_DIFFS_ACTION_ID);
+	const _upKeybinding = keybindingService.lookupKeybinding(LOOPHOLE_GOTO_PREV_DIFF_ACTION_ID);
+	const _downKeybinding = keybindingService.lookupKeybinding(LOOPHOLE_GOTO_NEXT_DIFF_ACTION_ID);
+	const _leftKeybinding = keybindingService.lookupKeybinding(LOOPHOLE_GOTO_PREV_URI_ACTION_ID);
+	const _rightKeybinding = keybindingService.lookupKeybinding(LOOPHOLE_GOTO_NEXT_URI_ACTION_ID);
+	const _acceptFileKeybinding = keybindingService.lookupKeybinding(LOOPHOLE_ACCEPT_FILE_ACTION_ID);
+	const _rejectFileKeybinding = keybindingService.lookupKeybinding(LOOPHOLE_REJECT_FILE_ACTION_ID);
+	const _acceptAllKeybinding = keybindingService.lookupKeybinding(LOOPHOLE_ACCEPT_ALL_DIFFS_ACTION_ID);
+	const _rejectAllKeybinding = keybindingService.lookupKeybinding(LOOPHOLE_REJECT_ALL_DIFFS_ACTION_ID);
 
 	const upKeybindLabel = editCodeService.processRawKeybindingText(_upKeybinding?.getLabel() || '');
 	const downKeybindLabel = editCodeService.processRawKeybindingText(_downKeybinding?.getLabel() || '');
