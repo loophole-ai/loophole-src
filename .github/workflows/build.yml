@@ -31,11 +31,15 @@ jobs:
         env:
           NODE_OPTIONS: "--max-old-space-size=8192"
 
-      - name: Rename folder for installer
-        run: ren Loophole-win32-x64 VSCode-win32-x64
-
       - name: Show directory contents
         run: dir
+
+      - name: Rename folder for installer
+        run: |
+          $folder = Get-ChildItem -Directory | Where-Object { $_.Name -like "*-win32-x64" } | Select-Object -First 1
+          Write-Host "Found folder: $($folder.Name)"
+          Rename-Item $folder.Name "VSCode-win32-x64"
+        shell: pwsh
 
       - name: Build Windows Installer
         run: npm run gulp -- vscode-win32-x64-user-setup
