@@ -227,6 +227,7 @@ function packageTask(platform, arch, sourceFolderName, destinationFolderName, op
 	opts = opts || {};
 
 	const destination = path.join(path.dirname(root), destinationFolderName);
+	console.log(`[DEBUG packageTask] platform=${platform}, arch=${arch}, source=${sourceFolderName}, dest=${destinationFolderName}, fullPath=${destination}`);
 	platform = platform || process.platform;
 
 	return () => {
@@ -234,6 +235,7 @@ function packageTask(platform, arch, sourceFolderName, destinationFolderName, op
 		const json = require('gulp-json-editor');
 
 		const out = sourceFolderName;
+		console.log(`[DEBUG packageTask/execute] Starting package task - out=${out}, destination=${destination}`);
 
 		const checksums = computeChecksums(out, [
 			'vs/base/parts/sandbox/electron-sandbox/preload.js',
@@ -471,6 +473,8 @@ function patchWin32DependenciesTask(destinationFolderName) {
 
 const buildRoot = path.dirname(root);
 
+console.log(`[DEBUG] gulpfile.vscode.js loaded - product.nameShort=${product.nameShort || 'undefined'}, buildRoot=${buildRoot}`);
+
 const BUILD_TARGETS = [
 	{ platform: 'win32', arch: 'x64' },
 	{ platform: 'win32', arch: 'arm64' },
@@ -488,7 +492,10 @@ BUILD_TARGETS.forEach(buildTarget => {
 
 	const [vscode, vscodeMin] = ['', 'min'].map(minified => {
 		const sourceFolderName = `out-vscode${dashed(minified)}`;
-		const destinationFolderName = `VSCode${dashed(platform)}${dashed(arch)}`;
+		// Use the product name for the destination folder, not the hardcoded "VSCode"
+		const appName = product.nameShort || 'VSCode';
+		const destinationFolderName = `${appName}${dashed(platform)}${dashed(arch)}`;
+		console.log(`[DEBUG] Platform: ${platform}, Arch: ${arch}, Minified: ${minified || 'false'}, AppName: ${appName}, DestinationFolder: ${destinationFolderName}`);
 
 		const tasks = [
 			compileNativeExtensionsBuildTask,
