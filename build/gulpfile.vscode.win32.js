@@ -18,7 +18,13 @@ const vfs = require('vinyl-fs');
 const rcedit = require('rcedit');
 
 const repoPath = path.dirname(__dirname);
-const buildPath = (/** @type {string} */ arch) => path.join(repoPath, `Loophole-win32-${arch}`);
+// use the product's short name for output folders so that branding
+// changes (e.g. from "VSCode" to "Loophole") are applied automatically.
+// `taskNamePrefix` is the lowercase version used in gulp task names.
+const appNameShort = product.nameShort || 'vscode';
+const taskNamePrefix = appNameShort.toLowerCase();
+console.log(`[DEBUG] Loaded gulpfile.vscode.win32.js - product.nameShort=${appNameShort}, taskNamePrefix=${taskNamePrefix}`);
+const buildPath = (/** @type {string} */ arch) => path.join(repoPath, `${appNameShort}-win32-${arch}`);
 const setupDir = (/** @type {string} */ arch, /** @type {string} */ target) => path.join(repoPath, '.build', `win32-${arch}`, `${target}-setup`);
 const issPath = path.join(__dirname, 'win32', 'code.iss');
 const innoSetupPath = path.join(path.dirname(path.dirname(require.resolve('innosetup'))), 'bin', 'ISCC.exe');
@@ -30,6 +36,7 @@ const signWin32Path = path.join(repoPath, 'build', 'azure-pipelines', 'common', 
 // so that packaging never proceeds when the files are missing.
 function ensureTools(arch, cb) {
 	const destDir = path.join(buildPath(arch), 'tools');
+	console.log(`[DEBUG ensureTools] arch=${arch}, destDir=${destDir}`);
 	fs.mkdirSync(destDir, { recursive: true });
 
 	const icon = path.join(repoPath, 'resources', 'win32', 'code.ico');
@@ -38,6 +45,7 @@ function ensureTools(arch, cb) {
 
 	files.forEach(f => {
 		const src = path.join(repoPath, 'build', 'win32', f);
+		console.log(`[DEBUG ensureTools] Checking for ${f} at ${src}`);
 		if (fs.existsSync(src)) {
 			try {
 				fs.copyFileSync(src, path.join(destDir, f));
@@ -110,12 +118,29 @@ function buildWin32Setup(arch, target) {
 		const arm64AppId = target === 'system' ? product.win32arm64AppId : product.win32arm64UserAppId;
 
 		const sourcePath = buildPath(arch);
+		console.log(`[DEBUG buildWin32Setup] arch=${arch}, target=${target}, taskNamePrefix=${taskNamePrefix}, sourcePath=${sourcePath}`);
 		const outputPath = setupDir(arch, target);
+		console.log(`[DEBUG buildWin32Setup] outputPath=${outputPath}`);
 		fs.mkdirSync(outputPath, { recursive: true });
 
 		const originalProductJsonPath = path.join(sourcePath, 'resources/app/product.json');
+		console.log(`[DEBUG buildWin32Setup] checking for product.json at: ${originalProductJsonPath}`);
+		if (!fs.existsSync(sourcePath)) {
+			console.error(`[ERROR] sourcePath directory does not exist: ${sourcePath}`);
+			console.error(`[DEBUG] Expected to find the build output from: ${taskNamePrefix}-win32-${arch}`);
+			console.error(`[DEBUG] product.nameShort=${product.nameShort}, product.applicationName=${product.applicationName}`);
+		}
+		if (!fs.existsSync(originalProductJsonPath)) {
+			const sourcePathContents = fs.existsSync(sourcePath) ? fs.readdirSync(sourcePath) : 'sourcePath does not exist';
+			console.error(`[ERROR] product.json not found at ${originalProductJsonPath}`);
+			console.error(`[DEBUG] sourcePath contents: ${JSON.stringify(sourcePathContents)}`);
+			throw new Error(`Could not find product.json at ${originalProductJsonPath}. ` +
+				`Did you run the ${taskNamePrefix}-win32-${arch} build first?`);
+		}
+		console.log(`[DEBUG buildWin32Setup] Found product.json, reading and parsing...`);
 		const productJsonPath = path.join(outputPath, 'product.json');
 		const productJson = JSON.parse(fs.readFileSync(originalProductJsonPath, 'utf8'));
+		console.log(`[DEBUG buildWin32Setup] Successfully parsed product.json`);
 		productJson['target'] = target;
 		fs.writeFileSync(productJsonPath, JSON.stringify(productJson, undefined, '\t'));
 
@@ -172,8 +197,16 @@ function buildWin32Setup(arch, target) {
  * @param {string} target
  */
 function defineWin32SetupTasks(arch, target) {
+	console.log(`[DEBUG defineWin32SetupTasks] Defining tasks for arch=${arch}, target=${target}, taskNamePrefix=${taskNamePrefix}`);
 	const cleanTask = util.rimraf(setupDir(arch, target));
-	gulp.task(task.define(`vscode-win32-${arch}-${target}-setup`, task.series(cleanTask, buildWin32Setup(arch, target))));
+	// new task name uses the product name prefix
+	const newName = `${taskNamePrefix}-win32-${arch}-${target}-setup`;
+	const oldName = `vscode-win32-${arch}-${target}-setup`;
+	console.log(`[DEBUG defineWin32SetupTasks] Task names - new: ${newName}, old (alias): ${oldName}`);
+	const seriesTask = task.series(cleanTask, buildWin32Setup(arch, target));
+	gulp.task(task.define(newName, seriesTask));
+	// also expose the old task name as an alias for compatibility
+	gulp.task(task.define(oldName, seriesTask));
 }
 
 defineWin32SetupTasks('x64', 'system');
@@ -185,7 +218,9 @@ defineWin32SetupTasks('arm64', 'user');
  * @param {string} arch
  */
 function copyInnoUpdater(arch) {
+	console.log(`[DEBUG copyInnoUpdater] arch=${arch}, buildPath=${buildPath(arch)}`);
 	return () => {
+		console.log(`[DEBUG copyInnoUpdater/execute] Copying inno_updater files to ${path.join(buildPath(arch), 'tools')}`);
 		return gulp.src('build/win32/{inno_updater.exe,vcruntime140.dll}', { base: 'build/win32' })
 			.pipe(vfs.dest(path.join(buildPath(arch), 'tools')));
 	};
@@ -201,5 +236,10 @@ function updateIcon(executablePath) {
 	};
 }
 
+// real tasks
+gulp.task(task.define(`${taskNamePrefix}-win32-x64-inno-updater`, task.series(copyInnoUpdater('x64'), updateIcon(path.join(buildPath('x64'), 'tools', 'inno_updater.exe')))));
+gulp.task(task.define(`${taskNamePrefix}-win32-arm64-inno-updater`, task.series(copyInnoUpdater('arm64'), updateIcon(path.join(buildPath('arm64'), 'tools', 'inno_updater.exe')))));
+// legacy names for backward compatibility
 gulp.task(task.define('vscode-win32-x64-inno-updater', task.series(copyInnoUpdater('x64'), updateIcon(path.join(buildPath('x64'), 'tools', 'inno_updater.exe')))));
 gulp.task(task.define('vscode-win32-arm64-inno-updater', task.series(copyInnoUpdater('arm64'), updateIcon(path.join(buildPath('arm64'), 'tools', 'inno_updater.exe')))));
+
