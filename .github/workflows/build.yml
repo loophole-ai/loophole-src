@@ -7,49 +7,31 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-
       - name: Install dependencies
         run: npm install
         env:
           NODE_OPTIONS: "--max-old-space-size=8192"
-
       - name: Compile
         run: npm run compile
         env:
           NODE_OPTIONS: "--max-old-space-size=8192"
-
       - name: Build Windows App
         run: npm run gulp -- vscode-win32-x64
         env:
           NODE_OPTIONS: "--max-old-space-size=8192"
-
-      - name: Fix product.json path
-        run: |
-          $src = Get-ChildItem -Path D:\a -Recurse -Filter "product.json" | Where-Object { $_.FullName -like "*win32*resources*" } | Select-Object -First 1
-          if ($src) {
-            Write-Host "Found product.json at: $($src.FullName)"
-            New-Item -ItemType Directory -Force -Path "VSCode-win32-x64\resources\app"
-            Copy-Item $src.FullName "VSCode-win32-x64\resources\app\product.json"
-          } else {
-            Write-Host "ERROR: product.json not found!"
-            exit 1
-          }
-
       - name: Build Windows Installer
         run: npm run gulp -- vscode-win32-x64-user-setup
         env:
           NODE_OPTIONS: "--max-old-space-size=8192"
-
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: loophole-windows
           path: |
-            VSCode-win32-x64/
+            Loophole-win32-x64/
             .build/win32-x64/user-setup/
           retention-days: 5
