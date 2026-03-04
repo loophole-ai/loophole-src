@@ -23,11 +23,6 @@ jobs:
         run: npm run gulp -- vscode-win32-x64
         env:
           NODE_OPTIONS: "--max-old-space-size=8192"
-      - name: Fix folder name
-        run: |
-          if (Test-Path "Loophole-win32-x64") {
-            Rename-Item -Path "Loophole-win32-x64" -NewName "VSCode-win32-x64"
-          }
       - name: Build Windows Installer
         run: npm run gulp -- vscode-win32-x64-user-setup
         env:
@@ -37,6 +32,6 @@ jobs:
         with:
           name: loophole-windows
           path: |
-            VSCode-win32-x64/
+            Loophole-win32-x64/
             .build/win32-x64/user-setup/
           retention-days: 5
