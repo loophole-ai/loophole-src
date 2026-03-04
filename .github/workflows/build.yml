@@ -1,51 +1,37 @@
 name: Build Windows
-
 on:
   workflow_dispatch:
-
 jobs:
   build:
     runs-on: windows-latest
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-
       - name: Install dependencies
         run: npm install
         env:
           NODE_OPTIONS: "--max-old-space-size=8192"
-
       - name: Compile
         run: npm run compile
         env:
           NODE_OPTIONS: "--max-old-space-size=8192"
-
       - name: Build Windows App
         run: npm run gulp -- vscode-win32-x64
         env:
           NODE_OPTIONS: "--max-old-space-size=8192"
-
-      - name: Show directory contents
-        run: dir
-
-      - name: Rename folder for installer
+      - name: Fix folder name
         run: |
-          $folder = Get-ChildItem -Directory | Where-Object { $_.Name -like "*-win32-x64" } | Select-Object -First 1
-          Write-Host "Found folder: $($folder.Name)"
-          Rename-Item $folder.Name "VSCode-win32-x64"
-        shell: pwsh
-
+          if (Test-Path "Loophole-win32-x64") {
+            Rename-Item -Path "Loophole-win32-x64" -NewName "VSCode-win32-x64"
+          }
       - name: Build Windows Installer
         run: npm run gulp -- vscode-win32-x64-user-setup
         env:
           NODE_OPTIONS: "--max-old-space-size=8192"
-
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
