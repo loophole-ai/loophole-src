@@ -48,4 +48,3 @@ steps:
       path: |
         Loophole-win32-x64/
         .build/win32-x64/user-setup/
-```
