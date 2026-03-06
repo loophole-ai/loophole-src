@@ -1552,11 +1552,6 @@ begin
   until Length(Text)=0;
 end;
 
-function NeedsAddToPathCheck(): Boolean;
-begin
-  Result := NeedsAddToPath(ExpandConstant('{app}\bin'));
-end;
-
 function NeedsAddToPath(VSCode: string): boolean;
 var
   OrigPath: string;
@@ -1567,6 +1562,11 @@ begin
     exit;
   end;
   Result := Pos(';' + VSCode + ';', ';' + OrigPath + ';') = 0;
+end;
+
+function NeedsAddToPathCheck(): Boolean;
+begin
+  Result := NeedsAddToPath(ExpandConstant('{app}\bin'));
 end;
 
 function AddToPath(VSCode: string): string;
