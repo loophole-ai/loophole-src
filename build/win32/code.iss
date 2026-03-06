@@ -1295,7 +1295,7 @@ Root: {#SoftwareClassesRootKey}; Subkey: "Software\Classes\Drive\shell\{#RegValu
 #define Uninstall32RootKey "HKLM32"
 #endif
 
-Root: {#EnvironmentRootKey}; Subkey: "{#EnvironmentKey}"; ValueType: expandsz; ValueName: "Path"; ValueData: "{code:AddToPath|{app}\bin}"; Tasks: addtopath; Check: NeedsAddToPath(ExpandConstant('{app}\bin'))
+Root: {#EnvironmentRootKey}; Subkey: "{#EnvironmentKey}"; ValueType: expandsz; ValueName: "Path"; ValueData: "{code:AddToPath|{app}\bin}"; Tasks: addtopath; Check: NeedsAddToPathCheck
 
 [Code]
 function IsBackgroundUpdate(): Boolean;
@@ -1550,6 +1550,11 @@ begin
       Text := '';
     end;
   until Length(Text)=0;
+end;
+
+function NeedsAddToPathCheck(): Boolean;
+begin
+  Result := NeedsAddToPath(ExpandConstant('{app}\bin'));
 end;
 
 function NeedsAddToPath(VSCode: string): boolean;
