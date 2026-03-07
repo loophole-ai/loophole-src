@@ -201,9 +201,6 @@ export class EditorGroupWatermark extends Disposable {
 				subtitle.style.color = 'var(--vscode-descriptionForeground)';
 				subtitle.style.marginTop = '4px';
 
-				const proText = $('span');
-				proText.textContent = 'Pro \u00B7 ';
-
 				const settingsLink = $('a');
 				settingsLink.textContent = 'Settings';
 				settingsLink.style.color = 'var(--vscode-textLink-activeForeground, #3794ff)';
@@ -216,7 +213,6 @@ export class EditorGroupWatermark extends Disposable {
 				settingsLink.onmouseenter = () => settingsLink.style.textDecoration = 'underline';
 				settingsLink.onmouseleave = () => settingsLink.style.textDecoration = 'none';
 
-				subtitle.appendChild(proText);
 				subtitle.appendChild(settingsLink);
 
 				titlesContainer.appendChild(title);
