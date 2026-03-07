@@ -92,7 +92,6 @@ export class EditorGroupWatermark extends Disposable {
 		container: HTMLElement,
 		@IKeybindingService private readonly keybindingService: IKeybindingService,
 		@IWorkspaceContextService private readonly contextService: IWorkspaceContextService,
-		// @IContextKeyService private readonly contextKeyService: IContextKeyService,
 		@IConfigurationService private readonly configurationService: IConfigurationService,
 		@IThemeService private readonly themeService: IThemeService,
 		@IWorkspacesService private readonly workspacesService: IWorkspacesService,
@@ -104,25 +103,17 @@ export class EditorGroupWatermark extends Disposable {
 		super();
 
 		const elements = h('.editor-group-watermark', [
-			h('.letterpress@icon'),
 			h('.shortcuts@shortcuts'),
 		]);
 
 		append(container, elements.root);
-		this.shortcuts = elements.shortcuts; // shortcuts div is modified on render()
-
-		// void icon style
-		const updateTheme = () => {
-			const theme = this.themeService.getColorTheme().type
-			const isDark = theme === ColorScheme.DARK || theme === ColorScheme.HIGH_CONTRAST_DARK
-			elements.icon.style.maxWidth = '220px'
-			elements.icon.style.opacity = '50%'
-			elements.icon.style.filter = isDark ? '' : 'invert(1)' //brightness(.5)
-		}
-		updateTheme()
-		this._register(
-			this.themeService.onDidColorThemeChange(updateTheme)
-		)
+		elements.root.style.maxWidth = '600px';
+		elements.root.style.alignItems = 'flex-start'; // Left-align elements inside
+		this.shortcuts = elements.shortcuts;
+		this.shortcuts.style.width = '100%';
+		this.shortcuts.style.display = 'flex';
+		this.shortcuts.style.flexDirection = 'column';
+		this.shortcuts.style.alignItems = 'flex-start';
 
 		this.registerListeners();
 
@@ -145,143 +136,258 @@ export class EditorGroupWatermark extends Disposable {
 			this.workbenchState = workbenchState;
 			this.render();
 		}));
-
-		// const allEntriesWhenClauses = [...noFolderEntries, ...folderEntries].filter(entry => entry.when !== undefined).map(entry => entry.when!);
-		// const allKeys = new Set<string>();
-		// allEntriesWhenClauses.forEach(when => when.keys().forEach(key => allKeys.add(key)));
-		// this._register(this.contextKeyService.onDidChangeContext(e => {
-		// 	if (e.affectsSome(allKeys)) {
-		// 		this.render();
-		// 	}
-		// }));
 	}
-
-
 
 	private render(): void {
 
 		this.clear();
-		const voidIconBox = append(this.shortcuts, $('.watermark-box'));
-		const recentsBox = append(this.shortcuts, $('div'));
-		recentsBox.style.display = 'flex'
-		recentsBox.style.flex = 'row'
-		recentsBox.style.justifyContent = 'center'
 
+		const mainContainer = append(this.shortcuts, $('div'));
+		mainContainer.style.display = 'flex';
+		mainContainer.style.flexDirection = 'column';
+		mainContainer.style.width = '100%';
+		mainContainer.style.maxWidth = '500px';
+		mainContainer.style.margin = '0 auto';
 
 		const update = async () => {
 
-			// put async at top so don't need to wait (this prevents a jitter on load)
 			const recentlyOpened = await this.workspacesService.getRecentlyOpened()
 				.catch(() => ({ files: [], workspaces: [] })).then(w => w.workspaces);
 
-			clearNode(voidIconBox);
-			clearNode(recentsBox);
+			clearNode(mainContainer);
 
 			this.currentDisposables.forEach(label => label.dispose());
 			this.currentDisposables.clear();
 
-
-			// Void - if the workbench is empty, show open
 			if (this.contextService.getWorkbenchState() === WorkbenchState.EMPTY) {
 
-				// Create a flex container for buttons with vertical direction
-				const buttonContainer = $('div');
-				buttonContainer.style.display = 'flex';
-				buttonContainer.style.flexDirection = 'column'; // Change to column for vertical stacking
-				buttonContainer.style.alignItems = 'center'; // Center the buttons horizontally
-				buttonContainer.style.gap = '8px'; // Reduce gap between buttons from 16px to 8px
-				buttonContainer.style.marginBottom = '16px';
-				voidIconBox.appendChild(buttonContainer);
+				// Header
+				const headerContainer = $('div');
+				headerContainer.style.display = 'flex';
+				headerContainer.style.alignItems = 'center';
+				headerContainer.style.marginBottom = '28px';
 
-				// Open a folder
-				const openFolderButton = h('button')
-				openFolderButton.root.classList.add('void-openfolder-button')
-				openFolderButton.root.style.display = 'block'
-				openFolderButton.root.style.width = '124px' // Set width to 124px as requested
-				openFolderButton.root.textContent = 'Open Folder'
-				openFolderButton.root.onclick = () => {
-					this.commandService.executeCommand(isMacintosh && isNative ? OpenFileFolderAction.ID : OpenFolderAction.ID)
-					// if (this.contextKeyService.contextMatchesRules(ContextKeyExpr.and(WorkbenchStateContext.isEqualTo('workspace')))) {
-					// 	this.commandService.executeCommand(OpenFolderViaWorkspaceAction.ID);
-					// } else {
-					// 	this.commandService.executeCommand(isMacintosh ? 'workbench.action.files.openFileFolder' : 'workbench.action.files.openFolder');
-					// }
+				const logoIcon = $('div');
+				logoIcon.classList.add('letterpress');
+				logoIcon.style.width = '42px';
+				logoIcon.style.height = '42px';
+				logoIcon.style.minWidth = '42px';
+				logoIcon.style.backgroundSize = 'contain';
+				logoIcon.style.backgroundRepeat = 'no-repeat';
+				logoIcon.style.backgroundPosition = 'center';
+
+				const updateTheme = () => {
+					const theme = this.themeService.getColorTheme().type
+					const isDark = theme === ColorScheme.DARK || theme === ColorScheme.HIGH_CONTRAST_DARK
+					logoIcon.style.filter = isDark ? '' : 'invert(1)';
 				}
-				buttonContainer.appendChild(openFolderButton.root);
+				updateTheme();
+				this.currentDisposables.add(this.themeService.onDidColorThemeChange(updateTheme));
 
-				// Open SSH button
-				const openSSHButton = h('button')
-				openSSHButton.root.classList.add('void-openssh-button')
-				openSSHButton.root.style.display = 'block'
-				openSSHButton.root.style.backgroundColor = '#5a5a5a' // Made darker than the default gray
-				openSSHButton.root.style.width = '124px' // Set width to 124px as requested
-				openSSHButton.root.textContent = 'Open SSH'
-				openSSHButton.root.onclick = () => {
+				const titlesContainer = $('div');
+				titlesContainer.style.display = 'flex';
+				titlesContainer.style.flexDirection = 'column';
+				titlesContainer.style.marginLeft = '16px';
+
+				const title = $('div');
+				title.textContent = 'Loophole';
+				title.style.fontSize = '22px';
+				title.style.fontWeight = '600';
+				title.style.color = 'var(--vscode-foreground)';
+				title.style.lineHeight = '1.2';
+
+				const subtitle = $('div');
+				subtitle.style.fontSize = '12px';
+				subtitle.style.color = 'var(--vscode-descriptionForeground)';
+				subtitle.style.marginTop = '4px';
+
+				const proText = $('span');
+				proText.textContent = 'Pro \u00B7 ';
+
+				const settingsLink = $('a');
+				settingsLink.textContent = 'Settings';
+				settingsLink.style.color = 'var(--vscode-textLink-activeForeground, #3794ff)';
+				settingsLink.style.cursor = 'pointer';
+				settingsLink.style.textDecoration = 'none';
+				settingsLink.className = 'void-settings-link';
+				settingsLink.onclick = () => {
+					this.commandService.executeCommand('workbench.action.openSettings');
+				};
+				settingsLink.onmouseenter = () => settingsLink.style.textDecoration = 'underline';
+				settingsLink.onmouseleave = () => settingsLink.style.textDecoration = 'none';
+
+				subtitle.appendChild(proText);
+				subtitle.appendChild(settingsLink);
+
+				titlesContainer.appendChild(title);
+				titlesContainer.appendChild(subtitle);
+
+				headerContainer.appendChild(logoIcon);
+				headerContainer.appendChild(titlesContainer);
+				mainContainer.appendChild(headerContainer);
+
+				// Cards
+				const cardsContainer = $('div');
+				cardsContainer.style.display = 'flex';
+				cardsContainer.style.gap = '12px';
+				cardsContainer.style.marginBottom = '32px';
+				cardsContainer.style.flexWrap = 'wrap';
+
+				const createCard = (iconClass: string, text: string, onClick: () => void) => {
+					const card = document.createElement('button');
+					card.style.display = 'flex';
+					card.style.flexDirection = 'column';
+					card.style.alignItems = 'flex-start';
+					card.style.padding = '12px 14px';
+					card.style.backgroundColor = 'var(--vscode-editorWidget-background, rgba(0,0,0,0.1))';
+					card.style.border = '1px solid var(--vscode-editorWidget-border, rgba(128,128,128,0.2))';
+					card.style.borderRadius = '6px';
+					card.style.cursor = 'pointer';
+					card.style.width = '140px';
+					card.style.transition = 'background-color 0.2s, border-color 0.2s';
+
+					card.onmouseenter = () => {
+						card.style.backgroundColor = 'var(--vscode-list-hoverBackground, rgba(255,255,255,0.05))';
+					};
+					card.onmouseleave = () => {
+						card.style.backgroundColor = 'var(--vscode-editorWidget-background, rgba(0,0,0,0.1))';
+					};
+
+					card.onclick = onClick;
+
+					const iconSpan = $('span');
+					iconSpan.className = iconClass;
+					iconSpan.style.marginBottom = '12px';
+					iconSpan.style.fontSize = '16px';
+					iconSpan.style.color = 'var(--vscode-foreground)';
+
+					const textSpan = $('span');
+					textSpan.textContent = text;
+					textSpan.style.fontSize = '13px';
+					textSpan.style.color = 'var(--vscode-foreground)';
+
+					card.appendChild(iconSpan);
+					card.appendChild(textSpan);
+
+					return card;
+				};
+
+				cardsContainer.appendChild(createCard('codicon codicon-folder', 'Open project', () => {
+					this.commandService.executeCommand(isMacintosh && isNative ? OpenFileFolderAction.ID : OpenFolderAction.ID);
+				}));
+				cardsContainer.appendChild(createCard('codicon codicon-repo-clone', 'Clone repo', () => {
+					this.commandService.executeCommand('git.clone');
+				}));
+				cardsContainer.appendChild(createCard('codicon codicon-remote', 'Connect via SSH', () => {
 					this.viewsService.openViewContainer(REMOTE_EXPLORER_VIEWLET_ID);
-				}
-				buttonContainer.appendChild(openSSHButton.root);
+				}));
 
+				mainContainer.appendChild(cardsContainer);
 
 				// Recents
 				if (recentlyOpened.length !== 0) {
+					const recentsContainer = $('div');
+					recentsContainer.style.width = '100%';
 
-					voidIconBox.append(
-						...recentlyOpened.map((w, i) => {
+					const recentsHeader = $('div');
+					recentsHeader.style.display = 'flex';
+					recentsHeader.style.justifyContent = 'space-between';
+					recentsHeader.style.marginBottom = '12px';
+					recentsHeader.style.fontSize = '12px';
+					recentsHeader.style.color = 'var(--vscode-descriptionForeground)';
 
-							let fullPath: string;
-							let windowOpenable: IWindowOpenable;
-							if (isRecentFolder(w)) {
-								windowOpenable = { folderUri: w.folderUri };
-								fullPath = w.label || this.labelService.getWorkspaceLabel(w.folderUri, { verbose: Verbosity.LONG });
-							}
-							else {
-								return null
-								// fullPath = w.label || this.labelService.getWorkspaceLabel(w.workspace, { verbose: Verbosity.LONG });
-								// windowOpenable = { workspaceUri: w.workspace.configPath };
-							}
+					const recentsTitle = $('span');
+					recentsTitle.textContent = 'Recent projects';
 
+					const viewAllLink = $('span');
+					viewAllLink.textContent = `View all (${recentlyOpened.length})`;
+					viewAllLink.style.cursor = 'pointer';
+					viewAllLink.onclick = () => {
+						this.commandService.executeCommand('workbench.action.openRecent');
+					};
+					viewAllLink.onmouseenter = () => viewAllLink.style.textDecoration = 'underline';
+					viewAllLink.onmouseleave = () => viewAllLink.style.textDecoration = 'none';
 
-							const { name, parentPath } = splitRecentLabel(fullPath);
+					recentsHeader.appendChild(recentsTitle);
+					recentsHeader.appendChild(viewAllLink);
+					recentsContainer.appendChild(recentsHeader);
 
-							const linkSpan = $('span');
-							linkSpan.classList.add('void-link')
-							linkSpan.style.display = 'flex'
-							linkSpan.style.gap = '4px'
-							linkSpan.style.padding = '8px'
+					const recentsList = $('div');
+					recentsList.style.display = 'flex';
+					recentsList.style.flexDirection = 'column';
+					recentsList.style.gap = '2px';
 
-							linkSpan.addEventListener('click', e => {
-								this.hostService.openWindow([windowOpenable], {
-									forceNewWindow: e.ctrlKey || e.metaKey,
-									remoteAuthority: w.remoteAuthority || null // local window if remoteAuthority is not set or can not be deducted from the openable
-								});
-								e.preventDefault();
-								e.stopPropagation();
+					recentlyOpened.slice(0, 6).forEach((w) => {
+						let fullPath: string;
+						let windowOpenable: IWindowOpenable;
+						if (isRecentFolder(w)) {
+							windowOpenable = { folderUri: w.folderUri };
+							fullPath = w.label || this.labelService.getWorkspaceLabel(w.folderUri, { verbose: Verbosity.LONG });
+						} else {
+							return;
+						}
+
+						const { name, parentPath } = splitRecentLabel(fullPath);
+
+						const linkSpan = $('div');
+						linkSpan.style.display = 'flex';
+						linkSpan.style.justifyContent = 'space-between';
+						linkSpan.style.alignItems = 'center';
+						linkSpan.style.padding = '6px 8px';
+						linkSpan.style.cursor = 'pointer';
+						linkSpan.style.borderRadius = '4px';
+						linkSpan.style.transition = 'background-color 0.1s';
+
+						linkSpan.onmouseenter = () => {
+							linkSpan.style.backgroundColor = 'var(--vscode-list-hoverBackground, rgba(255,255,255,0.05))';
+						};
+						linkSpan.onmouseleave = () => {
+							linkSpan.style.backgroundColor = 'transparent';
+						};
+
+						linkSpan.addEventListener('click', e => {
+							this.hostService.openWindow([windowOpenable], {
+								forceNewWindow: e.ctrlKey || e.metaKey,
+								remoteAuthority: w.remoteAuthority || null
 							});
+							e.preventDefault();
+							e.stopPropagation();
+						});
 
-							const nameSpan = $('span');
-							nameSpan.innerText = name;
-							nameSpan.title = fullPath;
-							linkSpan.appendChild(nameSpan);
+						const nameSpan = $('span');
+						nameSpan.innerText = name;
+						nameSpan.title = fullPath;
+						nameSpan.style.fontSize = '13px';
+						nameSpan.style.color = 'var(--vscode-foreground)';
+						nameSpan.style.whiteSpace = 'nowrap';
+						nameSpan.style.overflow = 'hidden';
+						nameSpan.style.textOverflow = 'ellipsis';
+						nameSpan.style.flexShrink = '0';
+						nameSpan.style.maxWidth = '200px';
 
-							const dirSpan = $('span');
-							dirSpan.style.paddingLeft = '4px';
-							dirSpan.style.whiteSpace = 'nowrap';
-							dirSpan.style.overflow = 'hidden';
-							dirSpan.style.maxWidth = '300px';
-							dirSpan.innerText = parentPath;
-							dirSpan.title = fullPath;
+						const dirSpan = $('span');
+						dirSpan.innerText = parentPath;
+						dirSpan.title = fullPath;
+						dirSpan.style.fontSize = '12px';
+						dirSpan.style.color = 'var(--vscode-descriptionForeground)';
+						dirSpan.style.whiteSpace = 'nowrap';
+						dirSpan.style.overflow = 'hidden';
+						dirSpan.style.textOverflow = 'ellipsis';
+						dirSpan.style.marginLeft = '12px';
+						dirSpan.style.textAlign = 'right';
 
-							linkSpan.appendChild(dirSpan);
+						linkSpan.appendChild(nameSpan);
+						linkSpan.appendChild(dirSpan);
+						recentsList.appendChild(linkSpan);
+					});
 
-							return linkSpan
-						})
-							.filter(v => !!v)
-							.slice(0, 5) // take 5 most recent
-					)
+					recentsContainer.appendChild(recentsList);
+					mainContainer.appendChild(recentsContainer);
 				}
 
 			}
 			else {
+				const voidIconBox = append(mainContainer, $('.watermark-box'));
 
 				// show them Void keybindings
 				const keys = this.keybindingService.lookupKeybinding(LOOPHOLE_CTRL_L_ACTION_ID);
@@ -304,23 +410,6 @@ export class EditorGroupWatermark extends Disposable {
 				if (keys2)
 					label2.set(keys2);
 				this.currentDisposables.add(label2);
-
-				// const keys3 = this.keybindingService.lookupKeybinding('workbench.action.openGlobalKeybindings');
-				// const button3 = append(recentsBox, $('button'));
-				// button3.textContent = `Void Settings`
-				// button3.style.display = 'block'
-				// button3.style.marginLeft = 'auto'
-				// button3.style.marginRight = 'auto'
-				// button3.classList.add('void-settings-watermark-button')
-
-				// const label3 = new KeybindingLabel(button3, OS, { renderUnboundKeybindings: true, ...defaultKeybindingLabelStyles });
-				// if (keys3)
-				// 	label3.set(keys3);
-				// button3.onclick = () => {
-				// 	this.commandService.executeCommand(LOOPHOLE_OPEN_SETTINGS_ACTION_ID)
-				// }
-				// this.currentDisposables.add(label3);
-
 			}
 
 		};

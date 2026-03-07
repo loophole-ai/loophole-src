@@ -94,10 +94,10 @@ const Codespan = ({ text, className, onClick, tooltip }: { text: string, classNa
 	// TODO compute this once for efficiency. we should use `labels.ts/shorten` to display duplicates properly
 
 	return <code
-		className={`font-mono font-medium rounded-sm bg-void-bg-1 px-1 ${className}`}
+		className={`font-mono font-medium rounded-sm bg-loophole-bg-1 px-1 ${className}`}
 		onClick={onClick}
 		{...tooltip ? {
-			'data-tooltip-id': 'void-tooltip',
+			'data-tooltip-id': 'loophole-tooltip',
 			'data-tooltip-content': tooltip,
 			'data-tooltip-place': 'top',
 		} : {}}
@@ -487,7 +487,7 @@ const RenderToken = ({ token, inPTag, codeURI, chatMessageLocation, tokenIdx, ..
 				onClick={() => { window.open(t.href) }}
 				href={t.href}
 				title={t.title ?? undefined}
-				className='underline cursor-pointer hover:brightness-90 transition-all duration-200 text-void-fg-2'
+				className='underline cursor-pointer hover:brightness-90 transition-all duration-200 text-loophole-fg-2'
 			>
 				{t.text}
 			</a>

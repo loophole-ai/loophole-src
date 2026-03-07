@@ -21,26 +21,26 @@ export const LoopholeTooltip = () => {
 
 	return (
 
-		// use native colors so we don't have to worry about @@void-scope styles
-		// --void-bg-1: var(--vscode-input-background);
-		// --void-bg-1-alt: var(--vscode-badge-background);
-		// --void-bg-2: var(--vscode-sideBar-background);
-		// --void-bg-2-alt: color-mix(in srgb, var(--vscode-sideBar-background) 30%, var(--vscode-editor-background) 70%);
-		// --void-bg-3: var(--vscode-editor-background);
+		// use native colors so we don't have to worry about @@loophole-scope styles
+		// --loophole-bg-1: var(--vscode-input-background);
+		// --loophole-bg-1-alt: var(--vscode-badge-background);
+		// --loophole-bg-2: var(--vscode-sideBar-background);
+		// --loophole-bg-2-alt: color-mix(in srgb, var(--vscode-sideBar-background) 30%, var(--vscode-editor-background) 70%);
+		// --loophole-bg-3: var(--vscode-editor-background);
 
-		// --void-fg-0: color-mix(in srgb, var(--vscode-tab-activeForeground) 90%, black 10%);
-		// --void-fg-1: var(--vscode-editor-foreground);
-		// --void-fg-2: var(--vscode-input-foreground);
-		// --void-fg-3: var(--vscode-input-placeholderForeground);
-		// /* --void-fg-4: var(--vscode-tab-inactiveForeground); */
-		// --void-fg-4: var(--vscode-list-deemphasizedForeground);
+		// --loophole-fg-0: color-mix(in srgb, var(--vscode-tab-activeForeground) 90%, black 10%);
+		// --loophole-fg-1: var(--vscode-editor-foreground);
+		// --loophole-fg-2: var(--vscode-input-foreground);
+		// --loophole-fg-3: var(--vscode-input-placeholderForeground);
+		// /* --loophole-fg-4: var(--vscode-tab-inactiveForeground); */
+		// --loophole-fg-4: var(--vscode-list-deemphasizedForeground);
 
-		// --void-warning: var(--vscode-charts-yellow);
+		// --loophole-warning: var(--vscode-charts-yellow);
 
-		// --void-border-1: var(--vscode-commandCenter-activeBorder);
-		// --void-border-2: var(--vscode-commandCenter-border);
-		// --void-border-3: var(--vscode-commandCenter-inactiveBorder);
-		// --void-border-4: var(--vscode-editorGroup-border);
+		// --loophole-border-1: var(--vscode-commandCenter-activeBorder);
+		// --loophole-border-2: var(--vscode-commandCenter-border);
+		// --loophole-border-3: var(--vscode-commandCenter-inactiveBorder);
+		// --loophole-border-4: var(--vscode-editorGroup-border);
 
 		<>
 			<style>
@@ -131,7 +131,7 @@ export const LoopholeTooltip = () => {
 				border='1px solid rgba(100,100,100,.2)'
 				opacity={1}
 				delayShow={50}
-				style={{ pointerEvents: 'all', userSelect: 'text', fontSize: 11, maxWidth: '280px', paddingTop:'8px', paddingBottom:'8px' }}
+				style={{ pointerEvents: 'all', userSelect: 'text', fontSize: 11, maxWidth: '280px', paddingTop: '8px', paddingBottom: '8px' }}
 			/>
 		</>
 	);
