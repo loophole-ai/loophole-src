@@ -15,15 +15,15 @@ export const Sidebar = ({ className }: { className: string }) => {
 
 	const isDark = useIsDark()
 	return <div
-		className={`@@void-scope ${isDark ? 'dark' : ''}`}
+		className={`@@loophole-scope ${isDark ? 'dark' : ''}`}
 		style={{ width: '100%', height: '100%' }}
 	>
 		<div
 			// default background + text styles for sidebar
 			className={`
 				w-full h-full
-				bg-void-bg-2
-				text-void-fg-1
+				bg-loophole-bg-2
+				text-loophole-fg-1
 			`}
 		>
 
