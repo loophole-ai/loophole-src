@@ -73,39 +73,36 @@ export const defaultProviderSettings = {
 
 export const defaultModelsOfProvider = {
 	openAI: [ // https://platform.openai.com/docs/models/gp
-		'gpt-4.1',
-		'gpt-4.1-mini',
-		'gpt-4.1-nano',
+		'gpt-5.4-thinking',
+		'gpt-5.3-codex',
 		'o3',
 		'o4-mini',
-		// 'o1',
-		// 'o1-mini',
-		// 'gpt-4o',
-		// 'gpt-4o-mini',
+		'gpt-oss-120b',
+		'gpt-4.1',
 	],
 	anthropic: [ // https://docs.anthropic.com/en/docs/about-claude/models
-		'claude-opus-4-0',
-		'claude-sonnet-4-0',
+		'claude-opus-4-6',
+		'claude-sonnet-4-6',
 		'claude-3-7-sonnet-latest',
 		'claude-3-5-sonnet-latest',
-		'claude-3-5-haiku-latest',
-		'claude-3-opus-latest',
 	],
 	xAI: [ // https://docs.x.ai/docs/models?cluster=us-east-1
-		'grok-2',
 		'grok-3',
 		'grok-3-mini',
 		'grok-3-fast',
-		'grok-3-mini-fast'
+		'grok-2',
 	],
 	gemini: [ // https://ai.google.dev/gemini-api/docs/models/gemini
+		'gemini-3.1-pro',
+		'gemini-3.1-flash-lite',
+		'gemini-3-deep-think',
 		'gemini-2.5-pro-exp-03-25',
-		'gemini-2.5-flash-preview-04-17',
 		'gemini-2.0-flash',
 		'gemini-2.0-flash-lite',
-		'gemini-2.5-pro-preview-05-06',
 	],
 	deepseek: [ // https://api-docs.deepseek.com/quick_start/pricing
+		'deepseek-v4',
+		'deepseek-v3-0324',
 		'deepseek-chat',
 		'deepseek-reasoner',
 	],
@@ -116,23 +113,34 @@ export const defaultModelsOfProvider = {
 	lmStudio: [], // autodetected
 
 	openRouter: [ // https://openrouter.ai/models
-		// 'anthropic/claude-3.7-sonnet:thinking',
-		'anthropic/claude-opus-4',
-		'anthropic/claude-sonnet-4',
-		'qwen/qwen3-235b-a22b',
+		'openai/gpt-5.4-thinking',
+		'openai/gpt-5.4-pro',
+		'anthropic/claude-opus-4.6',
+		'anthropic/claude-sonnet-4.6',
 		'anthropic/claude-3.7-sonnet',
-		'anthropic/claude-3.5-sonnet',
-		'deepseek/deepseek-r1',
-		'deepseek/deepseek-r1-zero:free',
-		'mistralai/devstral-small:free'
-		// 'openrouter/quasar-alpha',
-		// 'google/gemini-2.5-pro-preview-03-25',
-		// 'mistralai/codestral-2501',
-		// 'qwen/qwen-2.5-coder-32b-instruct',
-		// 'mistralai/mistral-small-3.1-24b-instruct:free',
-		// 'google/gemini-2.0-flash-lite-preview-02-05:free',
-		// 'google/gemini-2.0-pro-exp-02-05:free',
-		// 'google/gemini-2.0-flash-exp:free',
+		'google/gemini-3.1-pro',
+		'google/gemini-3.1-flash',
+		'google/gemini-3.1-flash-lite:free',
+		'deepseek/deepseek-v3.2',
+		'deepseek/deepseek-r1-0528:free',
+		'minimax/m2.5',
+		'moonshot/kimi-k2.5',
+		'zhipu/glm-5',
+		'qwen/qwen3-72b-instruct',
+		'qwen/qwen3-vl-235b-a22b-thinking',
+		'mistralai/mistral-large-3',
+		'mistralai/mistral-small-3.1:free',
+		'meta-llama/llama-4-scout',
+		'meta-llama/llama-4-maverick',
+		'phind/phind-codellama-34b',
+		'01-ai/yi-large',
+		'liquid/lfm-40b',
+		'openai/gpt-4-turbo',
+		'arcee/trinity-large-preview',
+		'stepfun/step-3.5-flash',
+		'nvidia/nemotron-3-nano-30b',
+		'inception/mercury-2',
+		'perplexity/llama-3.1-sonar-large-128k-online',
 	],
 	groq: [ // https://console.groq.com/docs/models
 		'qwen-qwq-32b',
@@ -141,12 +149,10 @@ export const defaultModelsOfProvider = {
 		// 'qwen-2.5-coder-32b', // preview mode (experimental)
 	],
 	mistral: [ // https://docs.mistral.ai/getting-started/models/models_overview/
+		'mistral-large-3',
+		'ministral-14b-latest',
 		'codestral-latest',
-		'devstral-small-latest',
-		'mistral-large-latest',
-		'mistral-medium-latest',
-		'ministral-3b-latest',
-		'ministral-8b-latest',
+		'devstral-small-2-latest',
 	],
 	openAICompatible: [], // fallback
 	googleVertex: [],
@@ -311,13 +317,19 @@ const openSourceModelOptions_assumingOAICompat = {
 		supportsFIM: false,
 		supportsSystemMessage: 'system-role',
 		reasoningCapabilities: false,
-		contextWindow: 10_000_000, reservedOutputTokenSpace: 4_096,
+		contextWindow: 10_000_000, reservedOutputTokenSpace: 8_192,
 	},
 	'llama4-maverick': {
 		supportsFIM: false,
 		supportsSystemMessage: 'system-role',
 		reasoningCapabilities: false,
-		contextWindow: 10_000_000, reservedOutputTokenSpace: 4_096,
+		contextWindow: 1_000_000, reservedOutputTokenSpace: 8_192,
+	},
+	'llama4-scout-thinking': {
+		supportsFIM: false,
+		supportsSystemMessage: 'system-role',
+		reasoningCapabilities: { supportsReasoning: true, canTurnOffReasoning: true, canIOReasoning: true, openSourceThinkTags: ['<think>', '</think>'] },
+		contextWindow: 10_000_000, reservedOutputTokenSpace: 32_768,
 	},
 
 	// llama 3
@@ -395,10 +407,10 @@ const extensiveModelOptionsFallback: LoopholeStaticProviderInfo['modelOptionsFal
 
 	const lower = modelName.toLowerCase()
 
-	const toFallback = <T extends { [s: string]: Omit<LoopholeStaticModelInfo, 'cost' | 'downloadable'> },>(obj: T, recognizedModelName: string & keyof T)
+	const toFallback = <T extends { [s: string]: any },>(obj: T, recognizedModelName: string & keyof T)
 		: LoopholeStaticModelInfo & { modelName: string, recognizedModelName: string } => {
 
-		const opts = obj[recognizedModelName]
+		const opts = obj[recognizedModelName] as LoopholeStaticModelInfo
 		const supportsSystemMessage = opts.supportsSystemMessage === 'separated'
 			? 'system-role'
 			: opts.supportsSystemMessage
@@ -408,61 +420,48 @@ const extensiveModelOptionsFallback: LoopholeStaticProviderInfo['modelOptionsFal
 			modelName,
 			...opts,
 			supportsSystemMessage: supportsSystemMessage,
-			cost: { input: 0, output: 0 },
-			downloadable: false,
+			cost: opts.cost ?? { input: 0, output: 0 },
+			downloadable: opts.downloadable ?? false,
 			...fallbackKnownValues
 		};
 	}
 
+	if (lower.includes('gemini') && (lower.includes('3.1') || lower.includes('3-1'))) return toFallback(geminiModelOptions, 'gemini-3.1-pro')
 	if (lower.includes('gemini') && (lower.includes('2.5') || lower.includes('2-5'))) return toFallback(geminiModelOptions, 'gemini-2.5-pro-exp-03-25')
 
+	if (lower.includes('claude-4-6') || lower.includes('claude-4.6')) return toFallback(anthropicModelOptions, 'claude-sonnet-4.6-20260217')
+	if (lower.includes('claude-3-7') || lower.includes('claude-3.7')) return toFallback(anthropicModelOptions, 'claude-3-7-sonnet-20250219')
 	if (lower.includes('claude-3-5') || lower.includes('claude-3.5')) return toFallback(anthropicModelOptions, 'claude-3-5-sonnet-20241022')
-	if (lower.includes('claude')) return toFallback(anthropicModelOptions, 'claude-3-7-sonnet-20250219')
+	if (lower.includes('claude')) return toFallback(anthropicModelOptions, 'claude-sonnet-4.6-20260217')
 
-	if (lower.includes('grok2') || lower.includes('grok2')) return toFallback(xAIModelOptions, 'grok-2')
+	if (lower.includes('grok3') || lower.includes('grok-3')) return toFallback(xAIModelOptions, 'grok-3')
+	if (lower.includes('grok2') || lower.includes('grok-2')) return toFallback(xAIModelOptions, 'grok-2')
 	if (lower.includes('grok')) return toFallback(xAIModelOptions, 'grok-3')
 
+	if (lower.includes('deepseek-v4')) return toFallback(deepseekModelOptions, 'deepseek-v4')
+	if (lower.includes('deepseek-v3')) return toFallback(deepseekModelOptions, 'deepseek-v3-0324')
 	if (lower.includes('deepseek-r1') || lower.includes('deepseek-reasoner')) return toFallback(openSourceModelOptions_assumingOAICompat, 'deepseekR1')
-	if (lower.includes('deepseek') && lower.includes('v2')) return toFallback(openSourceModelOptions_assumingOAICompat, 'deepseekCoderV2')
-	if (lower.includes('deepseek')) return toFallback(openSourceModelOptions_assumingOAICompat, 'deepseekCoderV3')
+	if (lower.includes('deepseek')) return toFallback(deepseekModelOptions, 'deepseek-v4')
 
-	if (lower.includes('llama3')) return toFallback(openSourceModelOptions_assumingOAICompat, 'llama3')
-	if (lower.includes('llama3.1')) return toFallback(openSourceModelOptions_assumingOAICompat, 'llama3.1')
-	if (lower.includes('llama3.2')) return toFallback(openSourceModelOptions_assumingOAICompat, 'llama3.2')
+	if (lower.includes('llama4') || lower.includes('scout')) return toFallback(openSourceModelOptions_assumingOAICompat, 'llama4-scout')
+	if (lower.includes('llama4') || lower.includes('maverick')) return toFallback(openSourceModelOptions_assumingOAICompat, 'llama4-maverick')
 	if (lower.includes('llama3.3')) return toFallback(openSourceModelOptions_assumingOAICompat, 'llama3.3')
-	if (lower.includes('llama') || lower.includes('scout')) return toFallback(openSourceModelOptions_assumingOAICompat, 'llama4-scout')
-	if (lower.includes('llama') || lower.includes('maverick')) return toFallback(openSourceModelOptions_assumingOAICompat, 'llama4-scout')
+	if (lower.includes('llama3.2')) return toFallback(openSourceModelOptions_assumingOAICompat, 'llama3.2')
+	if (lower.includes('llama3.1')) return toFallback(openSourceModelOptions_assumingOAICompat, 'llama3.1')
 	if (lower.includes('llama')) return toFallback(openSourceModelOptions_assumingOAICompat, 'llama4-scout')
 
-	if (lower.includes('qwen') && lower.includes('2.5') && lower.includes('coder')) return toFallback(openSourceModelOptions_assumingOAICompat, 'qwen2.5coder')
-	if (lower.includes('qwen') && lower.includes('3')) return toFallback(openSourceModelOptions_assumingOAICompat, 'qwen3')
-	if (lower.includes('qwen')) return toFallback(openSourceModelOptions_assumingOAICompat, 'qwen3')
-	if (lower.includes('qwq')) { return toFallback(openSourceModelOptions_assumingOAICompat, 'qwq') }
-	if (lower.includes('phi4')) return toFallback(openSourceModelOptions_assumingOAICompat, 'phi4')
-	if (lower.includes('codestral')) return toFallback(openSourceModelOptions_assumingOAICompat, 'codestral')
-	if (lower.includes('devstral')) return toFallback(openSourceModelOptions_assumingOAICompat, 'devstral')
-
-	if (lower.includes('gemma')) return toFallback(openSourceModelOptions_assumingOAICompat, 'gemma')
-
-	if (lower.includes('starcoder2')) return toFallback(openSourceModelOptions_assumingOAICompat, 'starcoder2')
-
-	if (lower.includes('openhands')) return toFallback(openSourceModelOptions_assumingOAICompat, 'openhands-lm-32b') // max output uncler
-
-	if (lower.includes('quasar') || lower.includes('quaser')) return toFallback(openSourceModelOptions_assumingOAICompat, 'quasar')
-
-	if (lower.includes('gpt') && lower.includes('mini') && (lower.includes('4.1') || lower.includes('4-1'))) return toFallback(openAIModelOptions, 'gpt-4.1-mini')
-	if (lower.includes('gpt') && lower.includes('nano') && (lower.includes('4.1') || lower.includes('4-1'))) return toFallback(openAIModelOptions, 'gpt-4.1-nano')
+	if (lower.includes('gpt') && (lower.includes('5.4') || lower.includes('5-4'))) return toFallback(openAIModelOptions, 'gpt-5.4-thinking')
+	if (lower.includes('gpt') && (lower.includes('5.3') || lower.includes('5-3'))) return toFallback(openAIModelOptions, 'gpt-5.3-codex')
 	if (lower.includes('gpt') && (lower.includes('4.1') || lower.includes('4-1'))) return toFallback(openAIModelOptions, 'gpt-4.1')
 
-	if (lower.includes('4o') && lower.includes('mini')) return toFallback(openAIModelOptions, 'gpt-4o-mini')
-	if (lower.includes('4o')) return toFallback(openAIModelOptions, 'gpt-4o')
-
-	if (lower.includes('o1') && lower.includes('mini')) return toFallback(openAIModelOptions, 'o1-mini')
-	if (lower.includes('o1')) return toFallback(openAIModelOptions, 'o1')
 	if (lower.includes('o3') && lower.includes('mini')) return toFallback(openAIModelOptions, 'o3-mini')
 	if (lower.includes('o3')) return toFallback(openAIModelOptions, 'o3')
 	if (lower.includes('o4') && lower.includes('mini')) return toFallback(openAIModelOptions, 'o4-mini')
 
+	if (lower.includes('qwen') && lower.includes('3')) return toFallback(openSourceModelOptions_assumingOAICompat, 'qwen3')
+	if (lower.includes('qwen') && lower.includes('2.5') && lower.includes('coder')) return toFallback(openSourceModelOptions_assumingOAICompat, 'qwen2.5coder')
+
+	if (lower.includes('mistral-large-3')) return toFallback(mistralModelOptions, 'mistral-large-3')
 
 	if (Object.keys(openSourceModelOptions_assumingOAICompat).map(k => k.toLowerCase()).includes(lower))
 		return toFallback(openSourceModelOptions_assumingOAICompat, lower as keyof typeof openSourceModelOptions_assumingOAICompat)
@@ -478,8 +477,8 @@ const extensiveModelOptionsFallback: LoopholeStaticProviderInfo['modelOptionsFal
 // ---------------- ANTHROPIC ----------------
 const anthropicModelOptions = {
 	'claude-3-7-sonnet-20250219': { // https://docs.anthropic.com/en/docs/about-claude/models/all-models#model-comparison-table
-		contextWindow: 200_000,
-		reservedOutputTokenSpace: 8_192,
+		contextWindow: 1_000_000,
+		reservedOutputTokenSpace: 32_768,
 		cost: { input: 3.00, cache_read: 0.30, cache_write: 3.75, output: 15.00 },
 		downloadable: false,
 		supportsFIM: false,
@@ -489,8 +488,42 @@ const anthropicModelOptions = {
 			supportsReasoning: true,
 			canTurnOffReasoning: true,
 			canIOReasoning: true,
-			reasoningReservedOutputTokenSpace: 8192, // can bump it to 128_000 with beta mode output-128k-2025-02-19
-			reasoningSlider: { type: 'budget_slider', min: 1024, max: 8192, default: 1024 }, // they recommend batching if max > 32_000. we cap at 8192 because above is typically not necessary (often even buggy)
+			reasoningReservedOutputTokenSpace: 32_768,
+			reasoningSlider: { type: 'budget_slider', min: 1024, max: 32_768, default: 4096 },
+		},
+
+	},
+	'claude-opus-4.6-20260205': {
+		contextWindow: 1_000_000,
+		reservedOutputTokenSpace: 32_768,
+		cost: { input: 15.00, cache_read: 1.50, cache_write: 18.75, output: 75.00 },
+		downloadable: false,
+		supportsFIM: false,
+		specialToolFormat: 'anthropic-style',
+		supportsSystemMessage: 'separated',
+		reasoningCapabilities: {
+			supportsReasoning: true,
+			canTurnOffReasoning: true,
+			canIOReasoning: true,
+			reasoningReservedOutputTokenSpace: 32_768,
+			reasoningSlider: { type: 'budget_slider', min: 1024, max: 32_768, default: 4096 },
+		},
+
+	},
+	'claude-sonnet-4.6-20260217': {
+		contextWindow: 1_000_000,
+		reservedOutputTokenSpace: 32_768,
+		cost: { input: 3.00, cache_read: 0.30, cache_write: 3.75, output: 15.00 },
+		downloadable: false,
+		supportsFIM: false,
+		specialToolFormat: 'anthropic-style',
+		supportsSystemMessage: 'separated',
+		reasoningCapabilities: {
+			supportsReasoning: true,
+			canTurnOffReasoning: true,
+			canIOReasoning: true,
+			reasoningReservedOutputTokenSpace: 32_768,
+			reasoningSlider: { type: 'budget_slider', min: 1024, max: 32_768, default: 4096 },
 		},
 
 	},
@@ -603,6 +636,46 @@ const anthropicSettings: LoopholeStaticProviderInfo = {
 
 // ---------------- OPENAI ----------------
 const openAIModelOptions = { // https://platform.openai.com/docs/pricing
+	'gpt-5.4-thinking': {
+		contextWindow: 1_000_000,
+		reservedOutputTokenSpace: 128_000,
+		cost: { input: 15.00, output: 60.00, cache_read: 3.75 },
+		downloadable: false,
+		supportsFIM: false,
+		specialToolFormat: 'openai-style',
+		supportsSystemMessage: 'developer-role',
+		reasoningCapabilities: { supportsReasoning: true, canTurnOffReasoning: true, canIOReasoning: true, reasoningSlider: { type: 'effort_slider', values: ['low', 'medium', 'high'], default: 'high' } },
+	},
+	'gpt-5.3-codex': {
+		contextWindow: 1_000_000,
+		reservedOutputTokenSpace: 32_768,
+		cost: { input: 2.00, output: 8.00, cache_read: 0.50 },
+		downloadable: false,
+		supportsFIM: true,
+		specialToolFormat: 'openai-style',
+		supportsSystemMessage: 'developer-role',
+		reasoningCapabilities: false,
+	},
+	'gpt-oss-120b': {
+		contextWindow: 128_000,
+		reservedOutputTokenSpace: 32_768,
+		cost: { input: 0.50, output: 2.00 },
+		downloadable: { sizeGb: 70 },
+		supportsFIM: false,
+		specialToolFormat: 'openai-style',
+		supportsSystemMessage: 'developer-role',
+		reasoningCapabilities: { supportsReasoning: true, canTurnOffReasoning: true, canIOReasoning: true, openSourceThinkTags: ['<think>', '</think>'] },
+	},
+	'gpt-oss-20b': {
+		contextWindow: 32_768,
+		reservedOutputTokenSpace: 8_192,
+		cost: { input: 0.10, output: 0.40 },
+		downloadable: { sizeGb: 12 },
+		supportsFIM: false,
+		specialToolFormat: 'openai-style',
+		supportsSystemMessage: 'developer-role',
+		reasoningCapabilities: { supportsReasoning: true, canTurnOffReasoning: true, canIOReasoning: true, openSourceThinkTags: ['<think>', '</think>'] },
+	},
 	'o3': {
 		contextWindow: 1_047_576,
 		reservedOutputTokenSpace: 32_768,
@@ -806,11 +879,10 @@ const xAISettings: LoopholeStaticProviderInfo = {
 
 // ---------------- GEMINI ----------------
 const geminiModelOptions = { // https://ai.google.dev/gemini-api/docs/pricing
-	// https://ai.google.dev/gemini-api/docs/thinking#set-budget
-	'gemini-2.5-pro-preview-05-06': {
-		contextWindow: 1_048_576,
-		reservedOutputTokenSpace: 8_192,
-		cost: { input: 0, output: 0 },
+	'gemini-3.1-pro': {
+		contextWindow: 1_485_760,
+		reservedOutputTokenSpace: 128_000,
+		cost: { input: 1.25, output: 5.00 },
 		downloadable: false,
 		supportsFIM: false,
 		supportsSystemMessage: 'separated',
@@ -818,35 +890,35 @@ const geminiModelOptions = { // https://ai.google.dev/gemini-api/docs/pricing
 		reasoningCapabilities: {
 			supportsReasoning: true,
 			canTurnOffReasoning: true,
-			canIOReasoning: false,
-			reasoningSlider: { type: 'budget_slider', min: 1024, max: 8192, default: 1024 }, // max is really 24576
-			reasoningReservedOutputTokenSpace: 8192,
+			canIOReasoning: true,
+			reasoningSlider: { type: 'budget_slider', min: 1024, max: 32_768, default: 4096 },
+			reasoningReservedOutputTokenSpace: 32_768,
 		},
 	},
-	'gemini-2.0-flash-lite': {
+	'gemini-3.1-flash-lite': {
 		contextWindow: 1_048_576,
-		reservedOutputTokenSpace: 8_192,
-		cost: { input: 0, output: 0 },
+		reservedOutputTokenSpace: 32_768,
+		cost: { input: 0.05, output: 0.20 },
 		downloadable: false,
 		supportsFIM: false,
 		supportsSystemMessage: 'separated',
 		specialToolFormat: 'gemini-style',
-		reasoningCapabilities: false, // no reasoning
+		reasoningCapabilities: false,
 	},
-	'gemini-2.5-flash-preview-04-17': {
-		contextWindow: 1_048_576,
-		reservedOutputTokenSpace: 8_192,
-		cost: { input: 0.15, output: .60 }, // TODO $3.50 output with thinking not included
+	'gemini-3-deep-think': {
+		contextWindow: 2_000_000,
+		reservedOutputTokenSpace: 128_000,
+		cost: { input: 0, output: 0 },
 		downloadable: false,
 		supportsFIM: false,
 		supportsSystemMessage: 'separated',
 		specialToolFormat: 'gemini-style',
 		reasoningCapabilities: {
 			supportsReasoning: true,
-			canTurnOffReasoning: true,
-			canIOReasoning: false,
-			reasoningSlider: { type: 'budget_slider', min: 1024, max: 8192, default: 1024 }, // max is really 24576
-			reasoningReservedOutputTokenSpace: 8192,
+			canTurnOffReasoning: false,
+			canIOReasoning: true,
+			reasoningSlider: { type: 'budget_slider', min: 4096, max: 65_536, default: 8192 },
+			reasoningReservedOutputTokenSpace: 65_536,
 		},
 	},
 	'gemini-2.5-pro-exp-03-25': {
@@ -867,7 +939,7 @@ const geminiModelOptions = { // https://ai.google.dev/gemini-api/docs/pricing
 	},
 	'gemini-2.0-flash': {
 		contextWindow: 1_048_576,
-		reservedOutputTokenSpace: 8_192, // 8_192,
+		reservedOutputTokenSpace: 8_192,
 		cost: { input: 0.10, output: 0.40 },
 		downloadable: false,
 		supportsFIM: false,
@@ -875,9 +947,9 @@ const geminiModelOptions = { // https://ai.google.dev/gemini-api/docs/pricing
 		specialToolFormat: 'gemini-style',
 		reasoningCapabilities: false,
 	},
-	'gemini-2.0-flash-lite-preview-02-05': {
+	'gemini-2.0-flash-lite': {
 		contextWindow: 1_048_576,
-		reservedOutputTokenSpace: 8_192, // 8_192,
+		reservedOutputTokenSpace: 8_192,
 		cost: { input: 0.075, output: 0.30 },
 		downloadable: false,
 		supportsFIM: false,
@@ -887,8 +959,8 @@ const geminiModelOptions = { // https://ai.google.dev/gemini-api/docs/pricing
 	},
 	'gemini-1.5-flash': {
 		contextWindow: 1_048_576,
-		reservedOutputTokenSpace: 8_192, // 8_192,
-		cost: { input: 0.075, output: 0.30 },  // TODO!!! price doubles after 128K tokens, we are NOT encoding that info right now
+		reservedOutputTokenSpace: 8_192,
+		cost: { input: 0.075, output: 0.30 },
 		downloadable: false,
 		supportsFIM: false,
 		supportsSystemMessage: 'separated',
@@ -898,17 +970,7 @@ const geminiModelOptions = { // https://ai.google.dev/gemini-api/docs/pricing
 	'gemini-1.5-pro': {
 		contextWindow: 2_097_152,
 		reservedOutputTokenSpace: 8_192,
-		cost: { input: 1.25, output: 5.00 },  // TODO!!! price doubles after 128K tokens, we are NOT encoding that info right now
-		downloadable: false,
-		supportsFIM: false,
-		supportsSystemMessage: 'separated',
-		specialToolFormat: 'gemini-style',
-		reasoningCapabilities: false,
-	},
-	'gemini-1.5-flash-8b': {
-		contextWindow: 1_048_576,
-		reservedOutputTokenSpace: 8_192,
-		cost: { input: 0.0375, output: 0.15 },  // TODO!!! price doubles after 128K tokens, we are NOT encoding that info right now
+		cost: { input: 1.25, output: 5.00 },
 		downloadable: false,
 		supportsFIM: false,
 		supportsSystemMessage: 'separated',
@@ -926,6 +988,22 @@ const geminiSettings: LoopholeStaticProviderInfo = {
 
 // ---------------- DEEPSEEK API ----------------
 const deepseekModelOptions = {
+	'deepseek-v4': {
+		supportsFIM: false,
+		supportsSystemMessage: 'system-role',
+		reasoningCapabilities: { supportsReasoning: true, canTurnOffReasoning: true, canIOReasoning: true, openSourceThinkTags: ['<think>', '</think>'] },
+		contextWindow: 128_000, reservedOutputTokenSpace: 8_192,
+		cost: { input: .27, output: 1.10 },
+		downloadable: false,
+	},
+	'deepseek-v3-0324': {
+		supportsFIM: false,
+		supportsSystemMessage: 'system-role',
+		reasoningCapabilities: { supportsReasoning: true, canTurnOffReasoning: true, canIOReasoning: true, openSourceThinkTags: ['<think>', '</think>'] },
+		contextWindow: 128_000, reservedOutputTokenSpace: 8_192,
+		cost: { input: .14, output: .55 },
+		downloadable: false,
+	},
 	'deepseek-chat': {
 		...openSourceModelOptions_assumingOAICompat.deepseekR1,
 		contextWindow: 64_000, // https://api-docs.deepseek.com/quick_start/pricing
@@ -958,6 +1036,33 @@ const deepseekSettings: LoopholeStaticProviderInfo = {
 // ---------------- MISTRAL ----------------
 
 const mistralModelOptions = { // https://mistral.ai/products/la-plateforme#pricing https://docs.mistral.ai/getting-started/models/models_overview/#premier-models
+	'mistral-large-3': {
+		contextWindow: 1_000_000,
+		reservedOutputTokenSpace: 32_768,
+		cost: { input: 2.00, output: 6.00 },
+		supportsFIM: false,
+		downloadable: { sizeGb: 73 },
+		supportsSystemMessage: 'system-role',
+		reasoningCapabilities: false,
+	},
+	'ministral-14b-latest': {
+		contextWindow: 128_000,
+		reservedOutputTokenSpace: 8_192,
+		cost: { input: 0.10, output: 0.10 },
+		supportsFIM: false,
+		downloadable: { sizeGb: 8 },
+		supportsSystemMessage: 'system-role',
+		reasoningCapabilities: { supportsReasoning: true, canIOReasoning: true, canTurnOffReasoning: true, openSourceThinkTags: ['<think>', '</think>'] },
+	},
+	'devstral-small-2-latest': {
+		contextWindow: 128_000,
+		reservedOutputTokenSpace: 8_192,
+		cost: { input: 0, output: 0 },
+		supportsFIM: true,
+		downloadable: { sizeGb: 14 },
+		supportsSystemMessage: 'system-role',
+		reasoningCapabilities: false,
+	},
 	'mistral-large-latest': {
 		contextWindow: 131_000,
 		reservedOutputTokenSpace: 8_192,
@@ -1310,6 +1415,78 @@ const openRouterModelOptions_assumingOpenAICompat = {
 		supportsSystemMessage: 'system-role',
 		reasoningCapabilities: false,
 	},
+	'phind/phind-codellama-34b': {
+		contextWindow: 16_384,
+		reservedOutputTokenSpace: 4_096,
+		cost: { input: 0, output: 0 },
+		downloadable: false,
+		supportsFIM: false,
+		supportsSystemMessage: 'system-role',
+		reasoningCapabilities: false,
+	},
+	'01-ai/yi-large': {
+		contextWindow: 32_768,
+		reservedOutputTokenSpace: 4_096,
+		cost: { input: 3.00, output: 3.00 },
+		downloadable: false,
+		supportsFIM: false,
+		supportsSystemMessage: 'system-role',
+		reasoningCapabilities: false,
+	},
+	'liquid/lfm-40b': {
+		contextWindow: 32_768,
+		reservedOutputTokenSpace: 4_096,
+		cost: { input: 0.15, output: 0.15 },
+		downloadable: false,
+		supportsFIM: false,
+		supportsSystemMessage: 'system-role',
+		reasoningCapabilities: false,
+	},
+	'openai/gpt-4-turbo': {
+		contextWindow: 128_000,
+		reservedOutputTokenSpace: 4_096,
+		cost: { input: 10.00, output: 30.00 },
+		downloadable: false,
+		supportsFIM: false,
+		supportsSystemMessage: 'system-role',
+		reasoningCapabilities: false,
+	},
+	'minimax/m2.5': {
+		contextWindow: 128_000,
+		reservedOutputTokenSpace: 8_192,
+		cost: { input: 0.10, output: 0.30 },
+		downloadable: false,
+		supportsFIM: false,
+		supportsSystemMessage: 'system-role',
+		reasoningCapabilities: false,
+	},
+	'moonshot/kimi-k2.5': {
+		contextWindow: 256_000,
+		reservedOutputTokenSpace: 8_192,
+		cost: { input: 0.80, output: 2.40 },
+		downloadable: false,
+		supportsFIM: false,
+		supportsSystemMessage: 'system-role',
+		reasoningCapabilities: { supportsReasoning: true, canIOReasoning: true, canTurnOffReasoning: true, openSourceThinkTags: ['<think>', '</think>'] },
+	},
+	'zhipu/glm-5': {
+		contextWindow: 128_000,
+		reservedOutputTokenSpace: 8_192,
+		cost: { input: 0.50, output: 1.50 },
+		downloadable: false,
+		supportsFIM: false,
+		supportsSystemMessage: 'system-role',
+		reasoningCapabilities: { supportsReasoning: true, canIOReasoning: true, canTurnOffReasoning: true, openSourceThinkTags: ['<think>', '</think>'] },
+	},
+	'google/gemini-3-flash-preview': {
+		contextWindow: 1_000_000,
+		reservedOutputTokenSpace: 32_768,
+		cost: { input: 0, output: 0 },
+		downloadable: false,
+		supportsFIM: false,
+		supportsSystemMessage: 'system-role',
+		reasoningCapabilities: false,
+	},
 	'google/gemini-2.0-flash-exp:free': {
 		contextWindow: 1_048_576,
 		reservedOutputTokenSpace: null,
@@ -1319,12 +1496,132 @@ const openRouterModelOptions_assumingOpenAICompat = {
 		supportsSystemMessage: 'system-role',
 		reasoningCapabilities: false,
 	},
-	'deepseek/deepseek-r1': {
-		...openSourceModelOptions_assumingOAICompat.deepseekR1,
-		contextWindow: 128_000,
-		reservedOutputTokenSpace: null,
-		cost: { input: 0.8, output: 2.4 },
+	'anthropic/claude-opus-4.6': {
+		contextWindow: 1_000_000,
+		reservedOutputTokenSpace: 32_768,
+		cost: { input: 15.00, output: 75.00 },
 		downloadable: false,
+		supportsFIM: false,
+		supportsSystemMessage: 'system-role',
+		reasoningCapabilities: {
+			supportsReasoning: true,
+			canTurnOffReasoning: true,
+			canIOReasoning: true,
+			reasoningSlider: { type: 'budget_slider', min: 1024, max: 32_768, default: 4096 },
+		},
+	},
+	'anthropic/claude-sonnet-4.6': {
+		contextWindow: 1_000_000,
+		reservedOutputTokenSpace: 32_768,
+		cost: { input: 3.00, output: 15.00 },
+		downloadable: false,
+		supportsFIM: false,
+		supportsSystemMessage: 'system-role',
+		reasoningCapabilities: {
+			supportsReasoning: true,
+			canTurnOffReasoning: true,
+			canIOReasoning: true,
+			reasoningSlider: { type: 'budget_slider', min: 1024, max: 32_768, default: 4096 },
+		},
+	},
+	'openai/gpt-5.4-thinking': {
+		contextWindow: 1_000_000,
+		reservedOutputTokenSpace: 128_000,
+		cost: { input: 15.00, output: 60.00 },
+		downloadable: false,
+		supportsFIM: false,
+		supportsSystemMessage: 'system-role',
+		reasoningCapabilities: { supportsReasoning: true, canIOReasoning: true, canTurnOffReasoning: true, reasoningSlider: { type: 'effort_slider', values: ['low', 'medium', 'high'], default: 'high' } },
+	},
+	'openai/gpt-5.4-pro': {
+		contextWindow: 200_000,
+		reservedOutputTokenSpace: 32_768,
+		cost: { input: 15.00, output: 60.00 },
+		downloadable: false,
+		supportsFIM: false,
+		supportsSystemMessage: 'system-role',
+		reasoningCapabilities: { supportsReasoning: true, canIOReasoning: true, canTurnOffReasoning: true, reasoningSlider: { type: 'effort_slider', values: ['low', 'medium', 'high'], default: 'high' } },
+	},
+	'openai/gpt-5.4': {
+		contextWindow: 128_000,
+		reservedOutputTokenSpace: 16_384,
+		cost: { input: 5.00, output: 15.00 },
+		downloadable: false,
+		supportsFIM: false,
+		supportsSystemMessage: 'system-role',
+		reasoningCapabilities: false,
+	},
+	'google/gemini-3.1-pro': {
+		contextWindow: 1_485_760,
+		reservedOutputTokenSpace: 128_000,
+		cost: { input: 1.25, output: 5.00 },
+		downloadable: false,
+		supportsFIM: false,
+		supportsSystemMessage: 'system-role',
+		reasoningCapabilities: {
+			supportsReasoning: true,
+			canIOReasoning: true,
+			canTurnOffReasoning: true,
+			reasoningSlider: { type: 'budget_slider', min: 1024, max: 32_768, default: 4096 },
+		},
+	},
+	'google/gemini-3.1-flash': {
+		contextWindow: 1_000_000,
+		reservedOutputTokenSpace: 32_768,
+		cost: { input: 0.10, output: 0.40 },
+		downloadable: false,
+		supportsFIM: false,
+		supportsSystemMessage: 'system-role',
+		reasoningCapabilities: false,
+	},
+	'google/gemini-3.1-flash-lite:free': {
+		contextWindow: 1_048_576,
+		reservedOutputTokenSpace: 32_768,
+		cost: { input: 0, output: 0 },
+		downloadable: false,
+		supportsFIM: false,
+		supportsSystemMessage: 'system-role',
+		reasoningCapabilities: false,
+	},
+	'deepseek/deepseek-v3.2': {
+		contextWindow: 128_000,
+		reservedOutputTokenSpace: 8_192,
+		cost: { input: 0.27, output: 1.10 },
+		downloadable: false,
+		supportsFIM: false,
+		supportsSystemMessage: 'system-role',
+		reasoningCapabilities: { supportsReasoning: true, canIOReasoning: true, canTurnOffReasoning: true, openSourceThinkTags: ['<think>', '</think>'] },
+	},
+	'meta-llama/llama-4-scout': {
+		...openSourceModelOptions_assumingOAICompat['llama4-scout'],
+		cost: { input: 0.10, output: 0.40 },
+		downloadable: false,
+	},
+	'meta-llama/llama-4-maverick': {
+		...openSourceModelOptions_assumingOAICompat['llama4-maverick'],
+		cost: { input: 0.05, output: 0.20 },
+		downloadable: false,
+	},
+	'deepseek/deepseek-r1-0528:free': {
+		...openSourceModelOptions_assumingOAICompat.deepseekR1,
+		cost: { input: 0, output: 0 },
+		contextWindow: 128_000,
+		downloadable: false,
+	},
+	'qwen/qwen3-vl-235b-a22b-thinking': {
+		...openSourceModelOptions_assumingOAICompat.qwen3,
+		cost: { input: 0.50, output: 1.50 },
+		contextWindow: 128_000,
+		downloadable: false,
+	},
+	'mistralai/mistral-small-3.1:free': {
+		contextWindow: 128_000,
+		reservedOutputTokenSpace: 8_192,
+		cost: { input: 0, output: 0 },
+		downloadable: false,
+		supportsFIM: false,
+		supportsSystemMessage: 'system-role',
+		reasoningCapabilities: false,
 	},
 	'anthropic/claude-opus-4': {
 		contextWindow: 200_000,
@@ -1400,13 +1697,66 @@ const openRouterModelOptions_assumingOpenAICompat = {
 		cost: { input: 0.07, output: 0.16 },
 		downloadable: false,
 	},
-	'qwen/qwq-32b': {
-		...openSourceModelOptions_assumingOAICompat['qwq'],
-		contextWindow: 33_000,
-		reservedOutputTokenSpace: null,
-		cost: { input: 0.07, output: 0.16 },
+	'qwen/qwen3-72b-instruct': {
+		...openSourceModelOptions_assumingOAICompat.qwen3,
+		cost: { input: 0.40, output: 1.20 },
+		contextWindow: 128_000,
 		downloadable: false,
-	}
+	},
+	'arcee/trinity-large-preview': {
+		contextWindow: 128_000,
+		reservedOutputTokenSpace: 8_192,
+		cost: { input: 0.50, output: 1.50 },
+		downloadable: false,
+		supportsFIM: false,
+		supportsSystemMessage: 'system-role',
+		reasoningCapabilities: false,
+	},
+	'stepfun/step-3.5-flash': {
+		contextWindow: 256_000,
+		reservedOutputTokenSpace: 8_192,
+		cost: { input: 0.05, output: 0.15 },
+		downloadable: false,
+		supportsFIM: false,
+		supportsSystemMessage: 'system-role',
+		reasoningCapabilities: false,
+	},
+	'nvidia/nemotron-3-nano-30b': {
+		contextWindow: 32_000,
+		reservedOutputTokenSpace: 4_096,
+		cost: { input: 0.05, output: 0.05 },
+		downloadable: false,
+		supportsFIM: false,
+		supportsSystemMessage: 'system-role',
+		reasoningCapabilities: false,
+	},
+	'bytedance/seed-2.0-mini': {
+		contextWindow: 32_000,
+		reservedOutputTokenSpace: 4_096,
+		cost: { input: 0.05, output: 0.05 },
+		downloadable: false,
+		supportsFIM: false,
+		supportsSystemMessage: 'system-role',
+		reasoningCapabilities: false,
+	},
+	'inception/mercury-2': {
+		contextWindow: 64_000,
+		reservedOutputTokenSpace: 8_192,
+		cost: { input: 0.20, output: 0.60 },
+		downloadable: false,
+		supportsFIM: false,
+		supportsSystemMessage: 'system-role',
+		reasoningCapabilities: { supportsReasoning: true, canIOReasoning: true, canTurnOffReasoning: true },
+	},
+	'perplexity/llama-3.1-sonar-large-128k-online': {
+		contextWindow: 128_000,
+		reservedOutputTokenSpace: 4_096,
+		cost: { input: 1.00, output: 1.00 },
+		downloadable: false,
+		supportsFIM: false,
+		supportsSystemMessage: 'system-role',
+		reasoningCapabilities: false,
+	},
 } as const satisfies { [s: string]: LoopholeStaticModelInfo }
 
 const openRouterSettings: LoopholeStaticProviderInfo = {
