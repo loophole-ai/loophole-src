@@ -958,7 +958,7 @@ export const VoidInputBox = ({ onChangeText, onCreateInstance, inputBoxRef, plac
 	return <WidgetComponent
 		className='
 			bg-loophole-bg-1
-			@@void-force-child-placeholder-loophole-fg-1
+			@@loophole-force-child-placeholder-loophole-fg-1
 		'
 		ctor={InputBox}
 		propsFn={useCallback((container) => [

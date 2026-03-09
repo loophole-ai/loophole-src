@@ -3097,7 +3097,7 @@ export const SidebarChat = () => {
 		{[
 			'Summarize my codebase',
 			'How do types work in Rust?',
-			'Create a .voidrules file for me'
+			'Create a .loopholerules file for me'
 		].map((text, index) => (
 			<div
 				key={index}
@@ -3136,12 +3136,12 @@ export const SidebarChat = () => {
 
 		{Object.keys(chatThreadsState.allThreads).length > 1 ? // show if there are threads
 			<ErrorBoundary>
-				<div className='pt-8 mb-2 text-void-fg-3 text-root select-none pointer-events-none'>Previous Threads</div>
+				<div className='pt-8 mb-2 text-loophole-fg-3 text-root select-none pointer-events-none'>Previous Threads</div>
 				<PastThreadsList />
 			</ErrorBoundary>
 			:
 			<ErrorBoundary>
-				<div className='pt-8 mb-2 text-void-fg-3 text-root select-none pointer-events-none'>Suggestions</div>
+				<div className='pt-8 mb-2 text-loophole-fg-3 text-root select-none pointer-events-none'>Suggestions</div>
 				{initiallySuggestedPromptsHTML}
 			</ErrorBoundary>
 		}
