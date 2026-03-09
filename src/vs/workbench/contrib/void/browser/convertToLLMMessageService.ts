@@ -271,7 +271,7 @@ const prepareOpenAIOrAnthropicMessages = ({
 	// A COMPLETE HACK: last message is system message for context purposes
 
 	const sysMsgParts: string[] = []
-	if (aiInstructions) sysMsgParts.push(`GUIDELINES (from the user's .voidrules file):\n${aiInstructions}`)
+	if (aiInstructions) sysMsgParts.push(`GUIDELINES (from the user's .loopholerules file):\n${aiInstructions}`)
 	if (systemMessage) sysMsgParts.push(systemMessage)
 	const combinedSystemMessage = sysMsgParts.join('\n\n')
 
@@ -545,32 +545,32 @@ class ConvertToLLMMessageService extends Disposable implements IConvertToLLMMess
 		super()
 	}
 
-	// Read .voidrules files from workspace folders
-	private _getVoidRulesFileContents(): string {
+	// Read .loopholerules files from workspace folders
+	private _getLoopholeRulesFileContents(): string {
 		try {
 			const workspaceFolders = this.workspaceContextService.getWorkspace().folders;
-			let voidRules = '';
+			let loopholeRules = '';
 			for (const folder of workspaceFolders) {
-				const uri = URI.joinPath(folder.uri, '.voidrules')
+				const uri = URI.joinPath(folder.uri, '.loopholerules')
 				const { model } = this.voidModelService.getModel(uri)
 				if (!model) continue
-				voidRules += model.getValue(EndOfLinePreference.LF) + '\n\n';
+				loopholeRules += model.getValue(EndOfLinePreference.LF) + '\n\n';
 			}
-			return voidRules.trim();
+			return loopholeRules.trim();
 		}
 		catch (e) {
 			return ''
 		}
 	}
 
-	// Get combined AI instructions from settings and .voidrules files
+	// Get combined AI instructions from settings and .loopholerules files
 	private _getCombinedAIInstructions(): string {
 		const globalAIInstructions = this.voidSettingsService.state.globalSettings.aiInstructions;
-		const voidRulesFileContent = this._getVoidRulesFileContents();
+		const loopholeRulesFileContent = this._getLoopholeRulesFileContents();
 
 		const ans: string[] = []
 		if (globalAIInstructions) ans.push(globalAIInstructions)
-		if (voidRulesFileContent) ans.push(voidRulesFileContent)
+		if (loopholeRulesFileContent) ans.push(loopholeRulesFileContent)
 		return ans.join('\n\n')
 	}
 

@@ -108,12 +108,12 @@ export class EditorGroupWatermark extends Disposable {
 
 		append(container, elements.root);
 		elements.root.style.maxWidth = '600px';
-		elements.root.style.alignItems = 'flex-start'; // Left-align elements inside
+		elements.root.style.alignItems = 'center'; // Center elements inside
 		this.shortcuts = elements.shortcuts;
 		this.shortcuts.style.width = '100%';
 		this.shortcuts.style.display = 'flex';
 		this.shortcuts.style.flexDirection = 'column';
-		this.shortcuts.style.alignItems = 'flex-start';
+		this.shortcuts.style.alignItems = 'center';
 
 		this.registerListeners();
 
@@ -145,9 +145,10 @@ export class EditorGroupWatermark extends Disposable {
 		const mainContainer = append(this.shortcuts, $('div'));
 		mainContainer.style.display = 'flex';
 		mainContainer.style.flexDirection = 'column';
+		mainContainer.style.alignItems = 'center';
 		mainContainer.style.width = '100%';
-		mainContainer.style.maxWidth = '500px';
-		mainContainer.style.margin = '0 auto';
+		mainContainer.style.maxWidth = '480px';
+		mainContainer.style.margin = '20px auto 0';
 
 		const update = async () => {
 
@@ -159,68 +160,61 @@ export class EditorGroupWatermark extends Disposable {
 			this.currentDisposables.forEach(label => label.dispose());
 			this.currentDisposables.clear();
 
+			// Header (Always shown)
+			const headerContainer = $('div');
+			headerContainer.style.display = 'flex';
+			headerContainer.style.alignItems = 'center';
+			headerContainer.style.marginBottom = '28px';
+
+			const logoIcon = $('div');
+			logoIcon.classList.add('loophole-logo');
+			logoIcon.style.width = '45px';
+			logoIcon.style.height = '45px';
+			logoIcon.style.minWidth = '45px';
+			logoIcon.style.backgroundSize = 'contain';
+			logoIcon.style.backgroundRepeat = 'no-repeat';
+			logoIcon.style.backgroundPosition = 'center';
+
+			const titlesContainer = $('div');
+			titlesContainer.style.display = 'flex';
+			titlesContainer.style.flexDirection = 'column';
+			titlesContainer.style.marginLeft = '16px';
+
+			const title = $('div');
+			title.textContent = 'Loophole';
+			title.style.fontSize = '22px';
+			title.style.fontWeight = '600';
+			title.style.color = 'var(--vscode-foreground)';
+			title.style.lineHeight = '1.2';
+
+			const subtitle = $('div');
+			subtitle.style.fontSize = '12px';
+			subtitle.style.color = 'var(--vscode-descriptionForeground)';
+			subtitle.style.marginTop = '4px';
+
+			const settingsLink = $('a');
+			settingsLink.textContent = 'Settings';
+			settingsLink.style.color = 'var(--vscode-textLink-activeForeground, #3794ff)';
+			settingsLink.style.cursor = 'pointer';
+			settingsLink.style.textDecoration = 'none';
+			settingsLink.className = 'void-settings-link';
+			settingsLink.onclick = () => {
+				this.commandService.executeCommand('workbench.action.openSettings');
+			};
+			settingsLink.onmouseenter = () => settingsLink.style.textDecoration = 'underline';
+			settingsLink.onmouseleave = () => settingsLink.style.textDecoration = 'none';
+
+			subtitle.appendChild(settingsLink);
+
+			titlesContainer.appendChild(title);
+			titlesContainer.appendChild(subtitle);
+
+			headerContainer.appendChild(logoIcon);
+			headerContainer.appendChild(titlesContainer);
+			mainContainer.appendChild(headerContainer);
+
+
 			if (this.contextService.getWorkbenchState() === WorkbenchState.EMPTY) {
-
-				// Header
-				const headerContainer = $('div');
-				headerContainer.style.display = 'flex';
-				headerContainer.style.alignItems = 'center';
-				headerContainer.style.marginBottom = '28px';
-
-				const logoIcon = $('div');
-				logoIcon.classList.add('letterpress');
-				logoIcon.style.width = '42px';
-				logoIcon.style.height = '42px';
-				logoIcon.style.minWidth = '42px';
-				logoIcon.style.backgroundSize = 'contain';
-				logoIcon.style.backgroundRepeat = 'no-repeat';
-				logoIcon.style.backgroundPosition = 'center';
-
-				const updateTheme = () => {
-					const theme = this.themeService.getColorTheme().type
-					const isDark = theme === ColorScheme.DARK || theme === ColorScheme.HIGH_CONTRAST_DARK
-					logoIcon.style.filter = isDark ? '' : 'invert(1)';
-				}
-				updateTheme();
-				this.currentDisposables.add(this.themeService.onDidColorThemeChange(updateTheme));
-
-				const titlesContainer = $('div');
-				titlesContainer.style.display = 'flex';
-				titlesContainer.style.flexDirection = 'column';
-				titlesContainer.style.marginLeft = '16px';
-
-				const title = $('div');
-				title.textContent = 'Loophole';
-				title.style.fontSize = '22px';
-				title.style.fontWeight = '600';
-				title.style.color = 'var(--vscode-foreground)';
-				title.style.lineHeight = '1.2';
-
-				const subtitle = $('div');
-				subtitle.style.fontSize = '12px';
-				subtitle.style.color = 'var(--vscode-descriptionForeground)';
-				subtitle.style.marginTop = '4px';
-
-				const settingsLink = $('a');
-				settingsLink.textContent = 'Settings';
-				settingsLink.style.color = 'var(--vscode-textLink-activeForeground, #3794ff)';
-				settingsLink.style.cursor = 'pointer';
-				settingsLink.style.textDecoration = 'none';
-				settingsLink.className = 'void-settings-link';
-				settingsLink.onclick = () => {
-					this.commandService.executeCommand('workbench.action.openSettings');
-				};
-				settingsLink.onmouseenter = () => settingsLink.style.textDecoration = 'underline';
-				settingsLink.onmouseleave = () => settingsLink.style.textDecoration = 'none';
-
-				subtitle.appendChild(settingsLink);
-
-				titlesContainer.appendChild(title);
-				titlesContainer.appendChild(subtitle);
-
-				headerContainer.appendChild(logoIcon);
-				headerContainer.appendChild(titlesContainer);
-				mainContainer.appendChild(headerContainer);
 
 				// Cards
 				const cardsContainer = $('div');
@@ -237,16 +231,18 @@ export class EditorGroupWatermark extends Disposable {
 					card.style.padding = '12px 14px';
 					card.style.backgroundColor = 'var(--vscode-editorWidget-background, rgba(0,0,0,0.1))';
 					card.style.border = '1px solid var(--vscode-editorWidget-border, rgba(128,128,128,0.2))';
-					card.style.borderRadius = '6px';
+					card.style.borderRadius = '12px';
 					card.style.cursor = 'pointer';
 					card.style.width = '140px';
-					card.style.transition = 'background-color 0.2s, border-color 0.2s';
+					card.style.transition = 'background-color 0.2s, border-color 0.2s, transform 0.1s';
 
 					card.onmouseenter = () => {
 						card.style.backgroundColor = 'var(--vscode-list-hoverBackground, rgba(255,255,255,0.05))';
+						card.style.transform = 'translateY(-2px)';
 					};
 					card.onmouseleave = () => {
 						card.style.backgroundColor = 'var(--vscode-editorWidget-background, rgba(0,0,0,0.1))';
+						card.style.transform = 'translateY(0)';
 					};
 
 					card.onclick = onClick;
@@ -331,7 +327,7 @@ export class EditorGroupWatermark extends Disposable {
 						linkSpan.style.alignItems = 'center';
 						linkSpan.style.padding = '6px 8px';
 						linkSpan.style.cursor = 'pointer';
-						linkSpan.style.borderRadius = '4px';
+						linkSpan.style.borderRadius = '8px';
 						linkSpan.style.transition = 'background-color 0.1s';
 
 						linkSpan.onmouseenter = () => {
@@ -383,11 +379,13 @@ export class EditorGroupWatermark extends Disposable {
 
 			}
 			else {
-				const voidIconBox = append(mainContainer, $('.watermark-box'));
+				// We still show the Logo and title above (it's outside this if/else)
+				// Here we just add the keybindings box
+				const loopholeIconBox = append(mainContainer, $('.watermark-box'));
 
-				// show them Void keybindings
+				// show them Loophole keybindings
 				const keys = this.keybindingService.lookupKeybinding(LOOPHOLE_CTRL_L_ACTION_ID);
-				const dl = append(voidIconBox, $('dl'));
+				const dl = append(loopholeIconBox, $('dl'));
 				const dt = append(dl, $('dt'));
 				dt.textContent = 'Chat'
 				const dd = append(dl, $('dd'));
@@ -398,7 +396,7 @@ export class EditorGroupWatermark extends Disposable {
 
 
 				const keys2 = this.keybindingService.lookupKeybinding(LOOPHOLE_CTRL_K_ACTION_ID);
-				const dl2 = append(voidIconBox, $('dl'));
+				const dl2 = append(loopholeIconBox, $('dl'));
 				const dt2 = append(dl2, $('dt'));
 				dt2.textContent = 'Quick Edit'
 				const dd2 = append(dl2, $('dd'));

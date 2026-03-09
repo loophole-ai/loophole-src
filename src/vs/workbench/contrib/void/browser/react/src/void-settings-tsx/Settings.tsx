@@ -730,7 +730,7 @@ export const SettingsForProvider = ({ providerName, showProviderTitle, showProvi
 					providerName={providerName}
 					settingName={settingName}
 					subTextMd={i !== settingNames.length - 1 ? null
-						: <ChatMarkdownRender string={subTextMdOfProviderName(providerName)} chatMessageLocation={undefined} />}
+						: <ChatMarkdownRender string={subTextMdOfProviderName(providerName).replace(/Void/g, 'Loophole')} chatMessageLocation={undefined} />}
 				/>
 			})}
 
@@ -744,7 +744,7 @@ export const SettingsForProvider = ({ providerName, showProviderTitle, showProvi
 }
 
 
-export const VoidProviderSettings = ({ providerNames }: { providerNames: ProviderName[] }) => {
+export const LoopholeProviderSettings = ({ providerNames }: { providerNames: ProviderName[] }) => {
 	return <>
 		{providerNames.map(providerName =>
 			<SettingsForProvider key={providerName} providerName={providerName} showProviderTitle={true} showProviderSuggestions={true} />
@@ -831,7 +831,7 @@ export const OllamaSetupInstructions = ({ sayWeAutoDetect }: { sayWeAutoDetect?:
 		>
 			<ChatMarkdownRender string={`3. Run \`ollama pull your_model\` to install a model.`} chatMessageLocation={undefined} />
 		</div>
-		{sayWeAutoDetect && <div className=' pl-6'><ChatMarkdownRender string={`Void automatically detects locally running models and enables them.`} chatMessageLocation={undefined} /></div>}
+		{sayWeAutoDetect && <div className=' pl-6'><ChatMarkdownRender string={`Loophole automatically detects locally running models and enables them.`} chatMessageLocation={undefined} /></div>}
 	</div>
 }
 
@@ -1064,12 +1064,12 @@ export const Settings = () => {
 		if (t === 'Chats') {
 			// Export chat threads
 			dataStr = JSON.stringify(chatThreadsService.state, null, 2)
-			downloadName = 'void-chats.json'
+			downloadName = 'loophole-chats.json'
 		}
 		else if (t === 'Settings') {
 			// Export user settings
 			dataStr = JSON.stringify(voidSettingsService.state, null, 2)
-			downloadName = 'void-settings.json'
+			downloadName = 'loophole-settings.json'
 		}
 		else {
 			dataStr = ''
@@ -1195,7 +1195,7 @@ export const Settings = () => {
 										<OllamaSetupInstructions sayWeAutoDetect={true} />
 									</div>
 
-									<VoidProviderSettings providerNames={localProviderNames} />
+									<LoopholeProviderSettings providerNames={localProviderNames} />
 								</ErrorBoundary>
 							</div>
 
@@ -1205,7 +1205,7 @@ export const Settings = () => {
 									<h2 className={`text-3xl mb-2`}>Main Providers</h2>
 									<h3 className={`text-loophole-fg-3 mb-2`}>{`Loophole can access models from Anthropic, OpenAI, OpenRouter, and more.`}</h3>
 
-									<VoidProviderSettings providerNames={nonlocalProviderNames} />
+									<LoopholeProviderSettings providerNames={nonlocalProviderNames} />
 								</ErrorBoundary>
 							</div>
 
