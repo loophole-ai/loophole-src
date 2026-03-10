@@ -371,7 +371,7 @@ const SimpleModelSettingsDialog = ({
 
 
 
-export const ModelDump = ({ filteredProviders }: { filteredProviders?: ProviderName[] }) => {
+export const ModelDump = ({ filteredProviders, searchQuery }: { filteredProviders?: ProviderName[], searchQuery?: string }) => {
 	const accessor = useAccessor()
 	const settingsStateService = accessor.get('ILoopholeSettingsService')
 	const settingsState = useSettingsState()
@@ -407,6 +407,12 @@ export const ModelDump = ({ filteredProviders }: { filteredProviders?: ProviderN
 		return Number(b.providerEnabled) - Number(a.providerEnabled)
 	})
 
+	// Filter by search query
+	const filteredModelDump = searchQuery ? modelDump.filter(m => {
+		const query = searchQuery.toLowerCase();
+		return m.modelName.toLowerCase().includes(query) || displayInfoOfProviderName(m.providerName).title.toLowerCase().includes(query);
+	}) : modelDump;
+
 	// Add model handler
 	const handleAddModel = () => {
 		if (!userChosenProviderName) {
@@ -436,7 +442,7 @@ export const ModelDump = ({ filteredProviders }: { filteredProviders?: ProviderN
 	};
 
 	return <div className=''>
-		{modelDump.map((m, i) => {
+		{filteredModelDump.map((m, i) => {
 			const { isHidden, type, modelName, providerName, providerEnabled } = m
 
 			const isNewProviderName = (i > 0 ? modelDump[i - 1] : undefined)?.providerName !== providerName
@@ -541,6 +547,7 @@ export const ModelDump = ({ filteredProviders }: { filteredProviders?: ProviderN
 							getOptionsEqual={(a, b) => a === b}
 							className="max-w-32 mx-2 w-full resize-none bg-loophole-bg-1 text-loophole-fg-1 placeholder:text-loophole-fg-3 border border-loophole-border-2 focus:border-loophole-border-1 py-1 px-2 rounded"
 							arrowTouchesText={false}
+							withSearch={true}
 						/>
 					</ErrorBoundary>
 
@@ -1035,6 +1042,8 @@ export const Settings = () => {
 	const [selectedSection, setSelectedSection] =
 		useState<Tab>('models');
 
+	const [modelSearchQuery, setModelSearchQuery] = useState('');
+
 	const navItems: { tab: Tab; label: string }[] = [
 		{ tab: 'models', label: 'Models' },
 		{ tab: 'localProviders', label: 'Local Providers' },
@@ -1178,7 +1187,16 @@ export const Settings = () => {
 							<div className={shouldShowTab('models') ? `` : 'hidden'}>
 								<ErrorBoundary>
 									<h2 className={`text-3xl mb-2`}>Models</h2>
-									<ModelDump />
+									<div className="mb-4">
+										<input
+											type="text"
+											className="w-full max-w-md bg-loophole-bg-2 text-loophole-fg-1 text-sm px-3 py-2 rounded border border-loophole-border-2 focus:border-blue-500 outline-none"
+											placeholder="Search models or providers..."
+											value={modelSearchQuery}
+											onChange={(e) => setModelSearchQuery(e.target.value)}
+										/>
+									</div>
+									<ModelDump searchQuery={modelSearchQuery} />
 									<div className='w-full h-[1px] my-4' />
 									<AutoDetectLocalModelsToggle />
 									<RefreshableModels />
