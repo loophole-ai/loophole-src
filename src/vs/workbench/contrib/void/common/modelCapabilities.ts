@@ -65,6 +65,33 @@ export const defaultProviderSettings = {
 		region: 'us-east-1', // add region setting
 		endpoint: '', // optionally allow overriding default
 	},
+	glm: { // Zhipu AI GLM https://open.bigmodel.cn
+		apiKey: '',
+	},
+	cohere: { // https://cohere.com
+		apiKey: '',
+	},
+	perplexity: { // https://www.perplexity.ai/settings/api
+		apiKey: '',
+	},
+	togetherAI: { // https://www.together.ai
+		apiKey: '',
+	},
+	fireworksAI: { // https://fireworks.ai
+		apiKey: '',
+	},
+	cerebras: { // https://cerebras.ai
+		apiKey: '',
+	},
+	sambaNova: { // https://sambanova.ai
+		apiKey: '',
+	},
+	novitaAI: { // https://novita.ai
+		apiKey: '',
+	},
+	freeModels: { // Curated free models via OpenRouter — no API key required for included free-tier models
+		apiKey: '',
+	},
 
 } as const
 
@@ -160,8 +187,117 @@ export const defaultModelsOfProvider = {
 	awsBedrock: [],
 	liteLLM: [],
 
+	// ---------------- NEW PROVIDERS ----------------
+	glm: [ // https://open.bigmodel.cn/dev/api/thirdparty-frame/openai-sdk
+		'glm-4-plus',
+		'glm-4-air',
+		'glm-4-airx',
+		'glm-4-flash',      // FREE tier available
+		'glm-4-flashx',     // FREE tier available
+		'glm-4-long',
+		'glm-4-alltools',
+		'glm-zero-preview',
+		'codegeex-4',       // Code model, FREE
+	],
+	cohere: [ // https://docs.cohere.com/docs/models
+		'command-a-03-2025',
+		'command-r-plus-08-2024',
+		'command-r-08-2024',
+		'command-r-plus',
+		'command-r',
+		'command',
+		'command-nightly',
+	],
+	perplexity: [ // https://docs.perplexity.ai/guides/model-cards
+		'sonar-pro',
+		'sonar',
+		'sonar-reasoning-pro',
+		'sonar-reasoning',
+		'sonar-deep-research',
+		'r1-1776',
+	],
+	togetherAI: [ // https://www.together.ai/models
+		'meta-llama/Llama-4-Maverick-17B-128E-Instruct-FP8',
+		'meta-llama/Llama-4-Scout-17B-16E-Instruct',
+		'meta-llama/Meta-Llama-3.3-70B-Instruct-Turbo',
+		'meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo',
+		'deepseek-ai/DeepSeek-V3',
+		'deepseek-ai/DeepSeek-R1',
+		'Qwen/Qwen3-235B-A22B',
+		'Qwen/Qwen3-30B-A3B',
+		'Qwen/QwQ-32B',
+		'Qwen/Qwen2.5-Coder-32B-Instruct',
+		'mistralai/Mistral-7B-Instruct-v0.3',  // FREE
+		'google/gemma-2-9b-it',                 // FREE
+	],
+	fireworksAI: [ // https://fireworks.ai/models
+		'accounts/fireworks/models/llama-v3p3-70b-instruct',
+		'accounts/fireworks/models/llama-v3p1-8b-instruct',
+		'accounts/fireworks/models/deepseek-v3',
+		'accounts/fireworks/models/deepseek-r1',
+		'accounts/fireworks/models/qwen3-235b-a22b',
+		'accounts/fireworks/models/qwen3-30b-a3b',
+		'accounts/fireworks/models/mixtral-8x7b-instruct',
+		'accounts/fireworks/models/llama-v3p2-11b-vision-instruct', // FREE
+		'accounts/fireworks/models/qwen2p5-coder-32b-instruct',
+		'accounts/fireworks/models/phi-3-vision-128k-instruct',    // FREE
+	],
+	cerebras: [ // https://inference.cerebras.ai — very fast inference
+		'llama-4-scout-17b-16e-instruct',
+		'llama-3.3-70b',
+		'llama-3.1-70b',
+		'llama-3.1-8b',
+		'deepseek-r1-distill-llama-70b',
+		'qwen-3-32b',
+	],
+	sambaNova: [ // https://sambanova.ai/technology/full-stack-ai-platform
+		'Meta-Llama-3.3-70B-Instruct',
+		'Meta-Llama-3.1-405B-Instruct',
+		'Meta-Llama-3.1-8B-Instruct',
+		'DeepSeek-R1-Distill-Llama-70B',
+		'DeepSeek-V3-0324',
+		'Qwen3-32B',
+		'Qwen2.5-Coder-32B-Instruct',
+	],
+	novitaAI: [ // https://novita.ai/llm-api
+		'meta-llama/llama-4-maverick',
+		'meta-llama/llama-4-scout',
+		'meta-llama/llama-3.3-70b-instruct',
+		'deepseek/deepseek-v3-0324',
+		'deepseek/deepseek-r1',
+		'qwen/qwen3-235b-a22b',
+		'qwen/qwen3-30b-a3b',
+		'google/gemma-3-27b-it',  // paid but cheap
+		'mistralai/mistral-7b-instruct', // cheap
+	],
+	freeModels: [ // Curated list of FREE models via OpenRouter (all :free tagged)
+		'google/gemini-2.0-flash-exp:free',
+		'google/gemini-2.0-flash-thinking-exp:free',
+		'google/gemini-3.1-flash-lite:free',
+		'google/gemini-2.0-pro-exp-02-05:free',
+		'deepseek/deepseek-r1-0528:free',
+		'deepseek/deepseek-chat:free',
+		'deepseek/deepseek-prover-v2:free',
+		'mistralai/devstral-small:free',
+		'mistralai/mistral-small-3.1:free',
+		'meta-llama/llama-4-scout:free',
+		'meta-llama/llama-3.3-70b-instruct:free',
+		'qwen/qwen3-235b-a22b:free',
+		'qwen/qwen3-30b-a3b:free',
+		'qwen/qwq-32b:free',
+		'microsoft/phi-4-reasoning-plus:free',
+		'zhipuai/glm-4-flash:free',
+		'thudm/glm-z1-32b:free',
+		'thudm/glm-4-9b:free',
+		'nvidia/llama-3.1-nemotron-ultra-253b-v1:free',
+		'bytedance/ui-tars-72b:free',
+		'moondream/moondream2:free',
+	],
+
 
 } as const satisfies Record<ProviderName, string[]>
+
+
 
 
 
@@ -1824,7 +1960,80 @@ const modelSettingsOfProvider: { [providerName in ProviderName]: LoopholeStaticP
 	googleVertex: googleVertexSettings,
 	microsoftAzure: microsoftAzureSettings,
 	awsBedrock: awsBedrockSettings,
+
+	glm: {
+		modelOptions: {},
+		modelOptionsFallback: (modelName) => extensiveModelOptionsFallback(modelName),
+		providerReasoningIOSettings: {
+			input: { includeInPayload: openAICompatIncludeInPayloadReasoning },
+			output: { nameOfFieldInDelta: 'reasoning' },
+		},
+	},
+	cohere: {
+		modelOptions: {},
+		modelOptionsFallback: (modelName) => extensiveModelOptionsFallback(modelName),
+		providerReasoningIOSettings: {
+			input: { includeInPayload: openAICompatIncludeInPayloadReasoning },
+		},
+	},
+	perplexity: {
+		modelOptions: {},
+		modelOptionsFallback: (modelName) => extensiveModelOptionsFallback(modelName),
+		providerReasoningIOSettings: {
+			input: { includeInPayload: openAICompatIncludeInPayloadReasoning },
+		},
+	},
+	togetherAI: {
+		modelOptions: {},
+		modelOptionsFallback: (modelName) => extensiveModelOptionsFallback(modelName),
+		providerReasoningIOSettings: {
+			input: { includeInPayload: openAICompatIncludeInPayloadReasoning },
+		},
+	},
+	fireworksAI: {
+		modelOptions: {},
+		modelOptionsFallback: (modelName) => extensiveModelOptionsFallback(modelName),
+		providerReasoningIOSettings: {
+			input: { includeInPayload: openAICompatIncludeInPayloadReasoning },
+		},
+	},
+	cerebras: {
+		modelOptions: {},
+		modelOptionsFallback: (modelName) => extensiveModelOptionsFallback(modelName),
+		providerReasoningIOSettings: {
+			input: { includeInPayload: openAICompatIncludeInPayloadReasoning },
+		},
+	},
+	sambaNova: {
+		modelOptions: {},
+		modelOptionsFallback: (modelName) => extensiveModelOptionsFallback(modelName),
+		providerReasoningIOSettings: {
+			input: { includeInPayload: openAICompatIncludeInPayloadReasoning },
+		},
+	},
+	novitaAI: {
+		modelOptions: {},
+		modelOptionsFallback: (modelName) => extensiveModelOptionsFallback(modelName),
+		providerReasoningIOSettings: {
+			input: { includeInPayload: openAICompatIncludeInPayloadReasoning },
+		},
+	},
+	freeModels: {
+		modelOptions: {},
+		modelOptionsFallback: (modelName) => extensiveModelOptionsFallback(modelName),
+		providerReasoningIOSettings: {
+			input: {
+				includeInPayload: (reasoningInfo) => {
+					if (!reasoningInfo?.isReasoningEnabled) return null
+					return { reasoning: { effort: reasoningInfo.type === 'effort_slider_value' ? reasoningInfo.reasoningEffort : 'medium' } }
+				}
+			},
+			output: { nameOfFieldInDelta: 'reasoning' },
+		},
+	},
 } as const
+
+
 
 
 // ---------------- exports ----------------
