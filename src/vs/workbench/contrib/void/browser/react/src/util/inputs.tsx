@@ -1264,6 +1264,8 @@ export const LoopholeCustomDropdownBox = <T extends NonNullable<any>>({
 	matchInputWidth = false,
 	gapPx = 0,
 	offsetPx = -6,
+	withSearch = false,
+	getSearchString,
 }: {
 	options: T[];
 	selectedOption: T | undefined;
@@ -1277,9 +1279,35 @@ export const LoopholeCustomDropdownBox = <T extends NonNullable<any>>({
 	matchInputWidth?: boolean;
 	gapPx?: number;
 	offsetPx?: number;
+	withSearch?: boolean;
+	getSearchString?: (option: T) => string;
 }) => {
 	const [isOpen, setIsOpen] = useState(false);
+	const [searchQuery, setSearchQuery] = useState('');
 	const measureRef = useRef<HTMLDivElement>(null);
+	const searchInputRef = useRef<HTMLInputElement>(null);
+
+	// Reset search when closing
+	useEffect(() => {
+		if (!isOpen) {
+			setSearchQuery('');
+		} else {
+			// Focus search input after opening
+			setTimeout(() => {
+				searchInputRef.current?.focus();
+			}, 0);
+		}
+	}, [isOpen]);
+
+	// Filter options based on search query
+	const filteredOptions = useMemo(() => {
+		if (!withSearch || !searchQuery) return options;
+		const query = searchQuery.toLowerCase();
+		return options.filter(option => {
+			const searchStr = getSearchString ? getSearchString(option) : getOptionDropdownName(option);
+			return searchStr.toLowerCase().includes(query);
+		});
+	}, [options, searchQuery, withSearch, getSearchString, getOptionDropdownName]);
 
 	// Replace manual positioning with floating-ui
 	const {
@@ -1331,8 +1359,9 @@ export const LoopholeCustomDropdownBox = <T extends NonNullable<any>>({
 	useEffect(() => {
 		if (options.length === 0) return
 		if (selectedOption !== undefined) return
+		if (isOpen) return // don't auto-set while user is picking
 		onChangeOption(options[0])
-	}, [selectedOption, onChangeOption, options])
+	}, [selectedOption, onChangeOption, options, isOpen])
 
 	// Handle clicks outside
 	useEffect(() => {
@@ -1370,12 +1399,12 @@ export const LoopholeCustomDropdownBox = <T extends NonNullable<any>>({
 				className="opacity-0 pointer-events-none absolute -left-[999999px] -top-[999999px] flex flex-col"
 				aria-hidden="true"
 			>
-				{options.map((option) => {
+				{options.map((option, i) => {
 					const optionName = getOptionDropdownName(option);
 					const optionDetail = getOptionDropdownDetail?.(option) || '';
 
 					return (
-						<div key={optionName + optionDetail} className="flex items-center whitespace-nowrap">
+						<div key={optionName + optionDetail + i} className="flex items-center whitespace-nowrap">
 							<div className="w-4" />
 							<span className="flex justify-between w-full">
 								<span>{optionName}</span>
@@ -1391,7 +1420,7 @@ export const LoopholeCustomDropdownBox = <T extends NonNullable<any>>({
 			<button
 				type='button'
 				ref={refs.setReference}
-				className="flex items-center h-4 bg-transparent whitespace-nowrap hover:brightness-90 w-full"
+				className="flex items-center h-4 bg-transparent whitespace-nowrap hover:brightness-90 w-full text-left"
 				onClick={() => setIsOpen(!isOpen)}
 			>
 				<span className={`truncate ${arrowTouchesText ? 'mr-1' : ''}`}>
@@ -1416,7 +1445,7 @@ export const LoopholeCustomDropdownBox = <T extends NonNullable<any>>({
 			{isOpen && (
 				<div
 					ref={refs.setFloating}
-					className="z-[100] bg-loophole-bg-1 border-loophole-border-3 border rounded shadow-lg"
+					className="z-[100] bg-loophole-bg-1 border-loophole-border-3 border rounded shadow-lg flex flex-col overflow-hidden"
 					style={{
 						position: strategy,
 						top: y ?? 0,
@@ -1429,52 +1458,76 @@ export const LoopholeCustomDropdownBox = <T extends NonNullable<any>>({
 							))
 					}}
 					onWheel={(e) => e.stopPropagation()}
-				><div className='overflow-auto max-h-80'>
-
-						{options.map((option) => {
-							const thisOptionIsSelected = getOptionsEqual(option, selectedOption);
-							const optionName = getOptionDropdownName(option);
-							const optionDetail = getOptionDropdownDetail?.(option) || '';
-
-							return (
-								<div
-									key={optionName}
-									className={`flex items-center px-2 py-1 pr-4 cursor-pointer whitespace-nowrap
-									transition-all duration-100
-									${thisOptionIsSelected ? 'bg-blue-500 text-white/80' : 'hover:bg-blue-500 hover:text-white/80'}
-								`}
-									onClick={() => {
-										onChangeOption(option);
+				>
+					{withSearch && (
+						<div className="px-2 py-2 border-b border-loophole-border-3">
+							<input
+								ref={searchInputRef}
+								type="text"
+								className="w-full bg-loophole-bg-2 text-loophole-fg-1 text-xs px-2 py-1 rounded outline-none border border-transparent focus:border-blue-500"
+								placeholder="Search models..."
+								value={searchQuery}
+								onChange={(e) => setSearchQuery(e.target.value)}
+								onKeyDown={(e) => {
+									if (e.key === 'Enter' && filteredOptions.length > 0) {
+										onChangeOption(filteredOptions[0]);
 										setIsOpen(false);
-									}}
-								>
-									<div className="w-4 flex justify-center flex-shrink-0">
-										{thisOptionIsSelected && (
-											<svg className="size-3" viewBox="0 0 12 12" fill="none">
-												<path
-													d="M10 3L4.5 8.5L2 6"
-													stroke="currentColor"
-													strokeWidth="1.5"
-													strokeLinecap="round"
-													strokeLinejoin="round"
-												/>
-											</svg>
-										)}
-									</div>
-									<span className="flex justify-between items-center w-full gap-x-1">
-										<span>{optionName}</span>
-										<span className='opacity-60'>{optionDetail}</span>
-									</span>
-								</div>
-							);
-						})}
-					</div>
+									}
+									e.stopPropagation();
+								}}
+							/>
+						</div>
+					)}
 
+					<div className='overflow-auto max-h-80'>
+						{filteredOptions.length === 0 ? (
+							<div className="px-4 py-2 text-xs text-loophole-fg-3 italic">No matches found</div>
+						) : (
+							filteredOptions.map((option, i) => {
+								const thisOptionIsSelected = getOptionsEqual(option, selectedOption);
+								const optionName = getOptionDropdownName(option);
+								const optionDetail = getOptionDropdownDetail?.(option) || '';
+
+								return (
+									<div
+										key={optionName + i}
+										className={`flex items-center px-2 py-1 pr-4 cursor-pointer whitespace-nowrap
+											transition-all duration-100 text-xs
+											${thisOptionIsSelected ? 'bg-blue-600 text-white' : 'hover:bg-blue-600 hover:text-white'}
+										`}
+										onClick={() => {
+											onChangeOption(option);
+											setIsOpen(false);
+										}}
+									>
+										<div className="w-4 flex justify-center flex-shrink-0">
+											{thisOptionIsSelected && (
+												<svg className="size-3" viewBox="0 0 12 12" fill="none">
+													<path
+														d="M10 3L4.5 8.5L2 6"
+														stroke="currentColor"
+														strokeWidth="1.5"
+														strokeLinecap="round"
+														strokeLinejoin="round"
+													/>
+												</svg>
+											)}
+										</div>
+										<span className="flex justify-between items-center w-full gap-x-4">
+											<span>{optionName}</span>
+											<span className={`opacity-60 text-[10px] ${thisOptionIsSelected ? 'text-white' : ''}`}>{optionDetail}</span>
+										</span>
+									</div>
+								);
+							})
+						)}
+					</div>
 				</div>
 			)}
 		</div>
 	);
 };
+
 
 
 

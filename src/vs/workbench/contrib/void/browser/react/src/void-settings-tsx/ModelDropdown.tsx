@@ -43,6 +43,8 @@ const ModelSelectBox = ({ options, featureName, className }: { options: ModelOpt
 		getOptionsEqual={(a, b) => optionsEqual([a], [b])}
 		className={className}
 		matchInputWidth={false}
+		withSearch={true}
+		getSearchString={(option) => `${option.selection.modelName} ${option.selection.providerName}`}
 	/>
 }
 
