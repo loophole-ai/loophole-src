@@ -84,7 +84,7 @@ class MCPService extends Disposable implements IMCPService {
 		@ILoopholeSettingsService private readonly voidSettingsService: ILoopholeSettingsService,
 	) {
 		super();
-		this.channel = this.mainProcessService.getChannel('void-channel-mcp')
+		this.channel = this.mainProcessService.getChannel('loophole-channel-mcp')
 
 
 		const onEvent = (e: MCPServerEventResponse) => {
