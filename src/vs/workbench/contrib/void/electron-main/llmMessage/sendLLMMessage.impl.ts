@@ -167,6 +167,51 @@ const newOpenAICompatibleSDK = async ({ settingsOfProvider, providerName, includ
 		const thisConfig = settingsOfProvider[providerName]
 		return new OpenAI({ baseURL: 'https://api.mistral.ai/v1', apiKey: thisConfig.apiKey, ...commonPayloadOpts })
 	}
+	else if (providerName === 'glm') {
+		const thisConfig = settingsOfProvider[providerName]
+		return new OpenAI({ baseURL: 'https://open.bigmodel.cn/api/paas/v4', apiKey: thisConfig.apiKey, ...commonPayloadOpts })
+	}
+	else if (providerName === 'cohere') {
+		const thisConfig = settingsOfProvider[providerName]
+		return new OpenAI({ baseURL: 'https://api.cohere.com/compatibility/v1', apiKey: thisConfig.apiKey, ...commonPayloadOpts })
+	}
+	else if (providerName === 'perplexity') {
+		const thisConfig = settingsOfProvider[providerName]
+		return new OpenAI({ baseURL: 'https://api.perplexity.ai', apiKey: thisConfig.apiKey, ...commonPayloadOpts })
+	}
+	else if (providerName === 'togetherAI') {
+		const thisConfig = settingsOfProvider[providerName]
+		return new OpenAI({ baseURL: 'https://api.together.xyz/v1', apiKey: thisConfig.apiKey, ...commonPayloadOpts })
+	}
+	else if (providerName === 'fireworksAI') {
+		const thisConfig = settingsOfProvider[providerName]
+		return new OpenAI({ baseURL: 'https://api.fireworks.ai/inference/v1', apiKey: thisConfig.apiKey, ...commonPayloadOpts })
+	}
+	else if (providerName === 'cerebras') {
+		const thisConfig = settingsOfProvider[providerName]
+		return new OpenAI({ baseURL: 'https://api.cerebras.ai/v1', apiKey: thisConfig.apiKey, ...commonPayloadOpts })
+	}
+	else if (providerName === 'sambaNova') {
+		const thisConfig = settingsOfProvider[providerName]
+		return new OpenAI({ baseURL: 'https://api.sambanova.ai/v1', apiKey: thisConfig.apiKey, ...commonPayloadOpts })
+	}
+	else if (providerName === 'novitaAI') {
+		const thisConfig = settingsOfProvider[providerName]
+		return new OpenAI({ baseURL: 'https://api.novita.ai/v3/openai', apiKey: thisConfig.apiKey, ...commonPayloadOpts })
+	}
+	else if (providerName === 'freeModels') {
+		// freeModels uses OpenRouter's API with the user's OpenRouter API key
+		const thisConfig = settingsOfProvider[providerName]
+		return new OpenAI({
+			baseURL: 'https://openrouter.ai/api/v1',
+			apiKey: thisConfig.apiKey || 'noop',
+			defaultHeaders: {
+				'HTTP-Referer': 'https://loophole.dev',
+				'X-Title': 'Loophole',
+			},
+			...commonPayloadOpts,
+		})
+	}
 
 	else throw new Error(`Loophole providerName was invalid: ${providerName}.`)
 }
@@ -333,7 +378,7 @@ const _sendOpenAICompatibleChat = async ({ messages, onText, onFinalMessage, onE
 	let toolId = ''
 	let toolParamsStr = ''
 
-	openai.chat.completions
+	return openai.chat.completions
 		.create(options)
 		.then(async response => {
 			_setAborter(() => response.controller.abort())
@@ -404,7 +449,7 @@ const _openaiCompatibleList = async ({ onSuccess: onSuccess_, onError: onError_,
 	}
 	try {
 		const openai = await newOpenAICompatibleSDK({ providerName, settingsOfProvider })
-		openai.models.list()
+		return openai.models.list()
 			.then(async (response) => {
 				const models: OpenAIModel[] = []
 				models.push(...response.data)
@@ -484,7 +529,7 @@ const sendAnthropicChat = async ({ messages, providerName, onText, onFinalMessag
 		dangerouslyAllowBrowser: true
 	});
 
-	const stream = anthropic.messages.stream({
+	return anthropic.messages.stream({
 		system: separateSystemMessage ?? undefined,
 		messages: messages as AnthropicLLMChatMessage[],
 		model: modelName,
@@ -516,8 +561,7 @@ const sendAnthropicChat = async ({ messages, providerName, onText, onFinalMessag
 			toolCall: !fullToolName ? undefined : { name: fullToolName, rawParams: {}, isDone: false, doneParams: [], id: 'dummy' },
 		})
 	}
-	// there are no events for tool_use, it comes in at the end
-	stream.on('streamEvent', e => {
+	return stream.on('streamEvent', e => {
 		// start block
 		if (e.type === 'content_block_start') {
 			if (e.content_block.type === 'text') {
@@ -593,7 +637,7 @@ const sendMistralFIM = ({ messages, onFinalMessage, onError, settingsOfProvider,
 	}
 
 	const mistral = new MistralCore({ apiKey: settingsOfProvider.mistral.apiKey })
-	fimComplete(mistral,
+	return fimComplete(mistral,
 		{
 			model: modelName,
 			prompt: messages.prefix,
@@ -635,7 +679,7 @@ const ollamaList = async ({ onSuccess: onSuccess_, onError: onError_, settingsOf
 	try {
 		const thisConfig = settingsOfProvider.ollama
 		const ollama = newOllamaSDK({ endpoint: thisConfig.endpoint })
-		ollama.list()
+		return ollama.list()
 			.then((response) => {
 				const { models } = response
 				onSuccess({ models })
@@ -654,7 +698,7 @@ const sendOllamaFIM = ({ messages, onFinalMessage, onError, settingsOfProvider, 
 	const ollama = newOllamaSDK({ endpoint: thisConfig.endpoint })
 
 	let fullText = ''
-	ollama.generate({
+	return ollama.generate({
 		model: modelName,
 		prompt: messages.prefix,
 		suffix: messages.suffix,
@@ -778,7 +822,7 @@ const sendGeminiChat = async ({
 	let toolId = ''
 
 
-	genAI.models.generateContentStream({
+	return genAI.models.generateContentStream({
 		model: modelName,
 		config: {
 			systemInstruction: separateSystemMessage,
