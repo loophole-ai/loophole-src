@@ -1134,11 +1134,12 @@ const deepseekModelOptions = {
 		downloadable: false,
 	},
 	'deepseek-chat': {
-		...openSourceModelOptions_assumingOAICompat.deepseekR1,
-		contextWindow: 64_000, // https://api-docs.deepseek.com/quick_start/pricing
-		reservedOutputTokenSpace: 8_000, // 8_000,
+		...openSourceModelOptions_assumingOAICompat.deepseekCoderV3,
+		contextWindow: 128_000, // https://api-docs.deepseek.com/quick_start/pricing
+		reservedOutputTokenSpace: 8_000,
 		cost: { cache_read: .07, input: .27, output: 1.10, },
 		downloadable: false,
+		reasoningCapabilities: false, // deepseek-chat is the non-reasoning V3 model
 	},
 	'deepseek-reasoner': {
 		...openSourceModelOptions_assumingOAICompat.deepseekCoderV2,
@@ -1165,6 +1166,15 @@ const deepseekSettings: LoopholeStaticProviderInfo = {
 // ---------------- MISTRAL ----------------
 
 const mistralModelOptions = { // https://mistral.ai/products/la-plateforme#pricing https://docs.mistral.ai/getting-started/models/models_overview/#premier-models
+	'mistral-large-2411': {
+		contextWindow: 128_000,
+		reservedOutputTokenSpace: 32_768,
+		cost: { input: 2.00, output: 6.00 },
+		supportsFIM: false,
+		downloadable: { sizeGb: 73 },
+		supportsSystemMessage: 'system-role',
+		reasoningCapabilities: false,
+	},
 	'mistral-large-3': {
 		contextWindow: 1_000_000,
 		reservedOutputTokenSpace: 32_768,
@@ -1499,6 +1509,20 @@ const liteLLMSettings: LoopholeStaticProviderInfo = { // https://docs.litellm.ai
 
 // ---------------- OPENROUTER ----------------
 const openRouterModelOptions_assumingOpenAICompat = {
+	'deepseek/deepseek-v3': {
+		...openSourceModelOptions_assumingOAICompat.deepseekCoderV3,
+		contextWindow: 128_000,
+		reservedOutputTokenSpace: 8_192,
+		cost: { input: 0.14, output: 0.55 },
+		downloadable: false,
+		reasoningCapabilities: false,
+	},
+	'deepseek/deepseek-r1': {
+		...openSourceModelOptions_assumingOAICompat.deepseekR1,
+		cost: { input: 0.55, output: 2.19 },
+		contextWindow: 128_000,
+		downloadable: false,
+	},
 	'qwen/qwen3-235b-a22b': {
 		contextWindow: 40_960,
 		reservedOutputTokenSpace: null,
@@ -1734,15 +1758,16 @@ const openRouterModelOptions_assumingOpenAICompat = {
 		contextWindow: 128_000,
 		downloadable: false,
 	},
-	'mistralai/mistral-small-3.1-24b-instruct:free': {
+	'mistralai/mistral-large-2411': {
 		contextWindow: 128_000,
-		reservedOutputTokenSpace: 8_192,
-		cost: { input: 0, output: 0 },
+		reservedOutputTokenSpace: 32_768,
+		cost: { input: 2.00, output: 6.00 },
 		downloadable: false,
 		supportsFIM: false,
 		supportsSystemMessage: 'system-role',
 		reasoningCapabilities: false,
 	},
+
 	'anthropic/claude-opus-4': {
 		contextWindow: 200_000,
 		reservedOutputTokenSpace: null,
