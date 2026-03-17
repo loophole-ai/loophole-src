@@ -1882,12 +1882,11 @@ const modelSettingsOfProvider: { [providerName in ProviderName]: LoopholeStaticP
 	microsoftAzure: microsoftAzureSettings,
 	awsBedrock: awsBedrockSettings,
 
-	glm: {
+	fireworksAI: {
 		modelOptions: {},
 		modelOptionsFallback: (modelName) => extensiveModelOptionsFallback(modelName),
 		providerReasoningIOSettings: {
 			input: { includeInPayload: openAICompatIncludeInPayloadReasoning },
-			output: { nameOfFieldInDelta: 'reasoning' },
 		},
 	},
 	cohere: {
@@ -1911,51 +1910,7 @@ const modelSettingsOfProvider: { [providerName in ProviderName]: LoopholeStaticP
 			input: { includeInPayload: openAICompatIncludeInPayloadReasoning },
 		},
 	},
-	fireworksAI: {
-		modelOptions: {},
-		modelOptionsFallback: (modelName) => extensiveModelOptionsFallback(modelName),
-		providerReasoningIOSettings: {
-			input: { includeInPayload: openAICompatIncludeInPayloadReasoning },
-		},
-	},
-	cerebras: {
-		modelOptions: {},
-		modelOptionsFallback: (modelName) => extensiveModelOptionsFallback(modelName),
-		providerReasoningIOSettings: {
-			input: { includeInPayload: openAICompatIncludeInPayloadReasoning },
-		},
-	},
-	sambaNova: {
-		modelOptions: {},
-		modelOptionsFallback: (modelName) => extensiveModelOptionsFallback(modelName),
-		providerReasoningIOSettings: {
-			input: { includeInPayload: openAICompatIncludeInPayloadReasoning },
-		},
-	},
-	novitaAI: {
-		modelOptions: {},
-		modelOptionsFallback: (modelName) => extensiveModelOptionsFallback(modelName),
-		providerReasoningIOSettings: {
-			input: { includeInPayload: openAICompatIncludeInPayloadReasoning },
-		},
-	},
-	freeModels: {
-		modelOptions: {},
-		modelOptionsFallback: (modelName) => extensiveModelOptionsFallback(modelName),
-		providerReasoningIOSettings: {
-			input: {
-				includeInPayload: (reasoningInfo) => {
-					if (!reasoningInfo?.isReasoningEnabled) return null
-					return { reasoning: { effort: reasoningInfo.type === 'effort_slider_value' ? reasoningInfo.reasoningEffort : 'medium' } }
-				}
-			},
-			output: { nameOfFieldInDelta: 'reasoning' },
-		},
-	},
 } as const
-
-
-
 
 // ---------------- exports ----------------
 

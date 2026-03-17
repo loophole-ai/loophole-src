@@ -106,9 +106,6 @@ export const displayInfoOfProviderName = (providerName: ProviderName): DisplayIn
 	else if (providerName === 'awsBedrock') {
 		return { title: 'AWS Bedrock', }
 	}
-	else if (providerName === 'glm') {
-		return { title: 'GLM (Zhipu AI)', }
-	}
 	else if (providerName === 'cohere') {
 		return { title: 'Cohere', }
 	}
@@ -120,18 +117,6 @@ export const displayInfoOfProviderName = (providerName: ProviderName): DisplayIn
 	}
 	else if (providerName === 'fireworksAI') {
 		return { title: 'Fireworks AI', }
-	}
-	else if (providerName === 'cerebras') {
-		return { title: 'Cerebras', }
-	}
-	else if (providerName === 'sambaNova') {
-		return { title: 'SambaNova', }
-	}
-	else if (providerName === 'novitaAI') {
-		return { title: 'Novita AI', }
-	}
-	else if (providerName === 'freeModels') {
-		return { title: 'Free Models', }
 	}
 
 	throw new Error(`descOfProviderName: Unknown provider name: "${providerName}"`)
@@ -155,15 +140,10 @@ export const subTextMdOfProviderName = (providerName: ProviderName): string => {
 	if (providerName === 'vLLM') return 'Read more about custom [Endpoints here](https://docs.vllm.ai/en/latest/getting_started/quickstart.html#openai-compatible-server).'
 	if (providerName === 'lmStudio') return 'Read more about custom [Endpoints here](https://lmstudio.ai/docs/app/api/endpoints/openai).'
 	if (providerName === 'liteLLM') return 'Read more about endpoints [here](https://docs.litellm.ai/docs/providers/openai_compatible).'
-	if (providerName === 'glm') return 'Get your [API Key here](https://open.bigmodel.cn/usercenter/apikeys).'
 	if (providerName === 'cohere') return 'Get your [API Key here](https://dashboard.cohere.com/api-keys).'
 	if (providerName === 'perplexity') return 'Get your [API Key here](https://www.perplexity.ai/settings/api).'
 	if (providerName === 'togetherAI') return 'Get your [API Key here](https://api.together.ai/settings/api-keys).'
 	if (providerName === 'fireworksAI') return 'Get your [API Key here](https://fireworks.ai/account/api-keys).'
-	if (providerName === 'cerebras') return 'Get your [API Key here](https://cloud.cerebras.ai).'
-	if (providerName === 'sambaNova') return 'Get your [API Key here](https://cloud.sambanova.ai/apis).'
-	if (providerName === 'novitaAI') return 'Get your [API Key here](https://novita.ai/llm-api).'
-	if (providerName === 'freeModels') return 'A curated collection of free models from various providers (via OpenRouter).'
 
 	throw new Error(`subTextMdOfProviderName: Unknown provider name: "${providerName}"`)
 }
@@ -192,14 +172,10 @@ export const displayInfoOfSettingName = (providerName: ProviderName, settingName
 												providerName === 'googleVertex' ? 'AIzaSy...' :
 													providerName === 'microsoftAzure' ? 'key-...' :
 														providerName === 'awsBedrock' ? 'key-...' :
-															providerName === 'glm' ? 'api-key...' :
-																providerName === 'cohere' ? 'key-...' :
+															providerName === 'cohere' ? 'key-...' :
 																	providerName === 'perplexity' ? 'pplx-...' :
 																		providerName === 'togetherAI' ? 'key-...' :
 																			providerName === 'fireworksAI' ? 'fw_key...' :
-																				providerName === 'cerebras' ? 'csk-...' :
-																					providerName === 'sambaNova' ? 'key-...' :
-																						providerName === 'novitaAI' ? 'key-...' :
 																							'',
 
 			isPasswordField: true,
@@ -396,12 +372,6 @@ export const defaultSettingsOfProvider: SettingsOfProvider = {
 		...modelInfoOfDefaultModelNames(defaultModelsOfProvider.awsBedrock),
 		_didFillInProviderSettings: undefined,
 	},
-	glm: {
-		...defaultCustomSettings,
-		...defaultProviderSettings.glm,
-		...modelInfoOfDefaultModelNames(defaultModelsOfProvider.glm),
-		_didFillInProviderSettings: undefined,
-	},
 	cohere: {
 		...defaultCustomSettings,
 		...defaultProviderSettings.cohere,
@@ -424,30 +394,6 @@ export const defaultSettingsOfProvider: SettingsOfProvider = {
 		...defaultCustomSettings,
 		...defaultProviderSettings.fireworksAI,
 		...modelInfoOfDefaultModelNames(defaultModelsOfProvider.fireworksAI),
-		_didFillInProviderSettings: undefined,
-	},
-	cerebras: {
-		...defaultCustomSettings,
-		...defaultProviderSettings.cerebras,
-		...modelInfoOfDefaultModelNames(defaultModelsOfProvider.cerebras),
-		_didFillInProviderSettings: undefined,
-	},
-	sambaNova: {
-		...defaultCustomSettings,
-		...defaultProviderSettings.sambaNova,
-		...modelInfoOfDefaultModelNames(defaultModelsOfProvider.sambaNova),
-		_didFillInProviderSettings: undefined,
-	},
-	novitaAI: {
-		...defaultCustomSettings,
-		...defaultProviderSettings.novitaAI,
-		...modelInfoOfDefaultModelNames(defaultModelsOfProvider.novitaAI),
-		_didFillInProviderSettings: undefined,
-	},
-	freeModels: {
-		...defaultCustomSettings,
-		...defaultProviderSettings.freeModels,
-		...modelInfoOfDefaultModelNames(defaultModelsOfProvider.freeModels),
 		_didFillInProviderSettings: undefined,
 	},
 }
