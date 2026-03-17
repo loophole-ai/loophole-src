@@ -65,9 +65,6 @@ export const defaultProviderSettings = {
 		region: 'us-east-1', // add region setting
 		endpoint: '', // optionally allow overriding default
 	},
-	glm: { // Zhipu AI GLM https://open.bigmodel.cn
-		apiKey: '',
-	},
 	cohere: { // https://cohere.com
 		apiKey: '',
 	},
@@ -80,18 +77,6 @@ export const defaultProviderSettings = {
 	fireworksAI: { // https://fireworks.ai
 		apiKey: '',
 	},
-	cerebras: { // https://cerebras.ai
-		apiKey: '',
-	},
-	sambaNova: { // https://sambanova.ai
-		apiKey: '',
-	},
-	novitaAI: { // https://novita.ai
-		apiKey: '',
-	},
-	freeModels: { // Curated free models via OpenRouter — no API key required for included free-tier models
-		apiKey: '',
-	},
 
 } as const
 
@@ -99,37 +84,37 @@ export const defaultProviderSettings = {
 
 
 export const defaultModelsOfProvider = {
-	openAI: [ // https://platform.openai.com/docs/models/gp
-		'gpt-5.4-thinking',
-		'gpt-5.3-codex',
-		'o3',
-		'o4-mini',
-		'gpt-oss-120b',
-		'gpt-4.1',
+	openAI: [
+		'gpt-5.4',
+		'gpt-5.4-pro',
+		'gpt-5.2',
+		'gpt-5-mini',
+		'gpt-5-nano',
+		'gpt-4o',
+		'gpt-4o-mini',
 	],
-	anthropic: [ // https://docs.anthropic.com/en/docs/about-claude/models
+	anthropic: [
 		'claude-opus-4-6',
 		'claude-sonnet-4-6',
-		'claude-3-7-sonnet-latest',
-		'claude-3-5-sonnet-latest',
+		'claude-sonnet-4-5',
+		'claude-haiku-4-5-20251001',
+		'claude-3-5-haiku-20241022',
 	],
-	xAI: [ // https://docs.x.ai/docs/models?cluster=us-east-1
+	xAI: [
 		'grok-3',
 		'grok-3-mini',
-		'grok-3-fast',
-		'grok-2',
+		'grok-4.1-fast',
 	],
-	gemini: [ // https://ai.google.dev/gemini-api/docs/models/gemini
-		'gemini-3.1-pro',
-		'gemini-3.1-flash-lite',
-		'gemini-3-deep-think',
-		'gemini-2.5-pro-exp-03-25',
+	gemini: [
+		'gemini-3-pro-preview',
+		'gemini-3-flash-preview',
+		'gemini-2.5-pro',
+		'gemini-2.5-flash',
+		'gemini-2.5-flash-lite',
 		'gemini-2.0-flash',
 		'gemini-2.0-flash-lite',
 	],
-	deepseek: [ // https://api-docs.deepseek.com/quick_start/pricing
-		'deepseek-v4',
-		'deepseek-v3-0324',
+	deepseek: [
 		'deepseek-chat',
 		'deepseek-reasoner',
 	],
@@ -137,157 +122,84 @@ export const defaultModelsOfProvider = {
 	],
 	vLLM: [ // autodetected
 	],
-	lmStudio: [], // autodetected
-
-	openRouter: [ // https://openrouter.ai/models
+	lmStudio: [],
+	openRouter: [
+		'anthropic/claude-opus-4.6',
+		'anthropic/claude-sonnet-4.6',
+		'anthropic/claude-sonnet-4.5',
+		'anthropic/claude-haiku-4.5',
 		'openai/gpt-5.4',
-		'openai/gpt-5.4-pro',
-		'anthropic/claude-3.7-sonnet',
-		'anthropic/claude-3.5-sonnet',
-		'google/gemini-3.1-pro-preview',
-		'google/gemini-3.1-flash-preview',
-		'google/gemini-3.2-flash-lite-preview',
-		'deepseek/deepseek-v3',
+		'openai/gpt-5.2',
+		'openai/gpt-5-mini',
+		'openai/gpt-4o',
+		'openai/gpt-4o-mini',
+		'google/gemini-3-pro-preview',
+		'google/gemini-3-flash-preview',
+		'google/gemini-2.5-pro',
+		'google/gemini-2.5-flash',
+		'google/gemini-2.5-flash-lite',
+		'google/gemini-2.0-flash-001',
+		'deepseek/deepseek-v3.2',
+		'deepseek/deepseek-r1',
 		'deepseek/deepseek-r1:free',
-		'minimax/m2.5',
-		'moonshot/kimi-k3',
-		'zhipuai/glm-5',
-		'qwen/qwen-2.5-coder-32b-instruct',
-		'qwen/qwen3-vl-235b-a22b-thinking',
-		'mistralai/mistral-large-2411',
-		'mistralai/mistral-small-3.1-24b-instruct:free',
-		'meta-llama/llama-4.20-scout',
+		'meta-llama/llama-4-maverick',
 		'meta-llama/llama-3.3-70b-instruct',
-		'phind/phind-codellama-34b',
-		'01-ai/yi-large',
-		'liquid/lfm-40b',
-		'openai/gpt-4-turbo',
-		'arcee/trinity-large-preview',
-		'stepfun/step-3.5-flash',
-		'nvidia/nemotron-3-super',
-		'inception/mercury-2',
-		'perplexity/llama-3.1-sonar-large-128k-online',
+		'meta-llama/llama-3.1-405b-instruct',
+		'meta-llama/llama-3.3-70b-instruct:free',
+		'x-ai/grok-3',
+		'x-ai/grok-3-mini',
+		'x-ai/grok-4.1-fast',
+		'mistralai/mistral-large-3',
+		'mistralai/mistral-small-3.1-24b',
+		'mistralai/codestral-2501',
+		'mistralai/mistral-nemo',
+		'qwen/qwen-2.5-72b-instruct',
+		'qwen/qwen-2.5-coder-32b-instruct',
+		'qwen/qwq-32b',
+		'moonshotai/kimi-k2.5-0127',
+		'perplexity/sonar-pro',
+		'perplexity/sonar',
+		'perplexity/sonar-reasoning',
+		'openrouter/auto',
 	],
-	groq: [ // https://console.groq.com/docs/models
-		'qwen-qwq-32b',
+	groq: [
 		'llama-3.3-70b-versatile',
 		'llama-3.1-8b-instant',
-		// 'qwen-2.5-coder-32b', // preview mode (experimental)
+		'mixtral-8x7b-32768',
 	],
-	mistral: [ // https://docs.mistral.ai/getting-started/models/models_overview/
-		'mistral-large-3',
-		'ministral-14b-latest',
+	mistral: [
+		'mistral-large-latest',
+		'mistral-small-latest',
 		'codestral-latest',
-		'devstral-small-2-latest',
+		'open-mistral-nemo',
 	],
-	openAICompatible: [], // fallback
+	openAICompatible: [],
 	googleVertex: [],
 	microsoftAzure: [],
 	awsBedrock: [],
 	liteLLM: [],
-
-	// ---------------- NEW PROVIDERS ----------------
-	glm: [ // https://open.bigmodel.cn/dev/api/thirdparty-frame/openai-sdk
-		'glm-4-plus',
-		'glm-4-air',
-		'glm-4-airx',
-		'glm-4-flash',      // FREE tier available
-		'glm-4-flashx',     // FREE tier available
-		'glm-4-long',
-		'glm-4-alltools',
-		'glm-zero-preview',
-		'codegeex-4',       // Code model, FREE
-	],
-	cohere: [ // https://docs.cohere.com/docs/models
-		'command-a-03-2025',
-		'command-r-plus-08-2024',
-		'command-r-08-2024',
+	cohere: [
 		'command-r-plus',
 		'command-r',
-		'command',
-		'command-nightly',
+		'embed-v4.0',
 	],
-	perplexity: [ // https://docs.perplexity.ai/guides/model-cards
+	perplexity: [
 		'sonar-pro',
 		'sonar',
-		'sonar-reasoning-pro',
 		'sonar-reasoning',
-		'sonar-deep-research',
-		'r1-1776',
 	],
-	togetherAI: [ // https://www.together.ai/models
-		'meta-llama/Llama-4-Maverick-17B-128E-Instruct-FP8',
-		'meta-llama/Llama-4-Scout-17B-16E-Instruct',
-		'meta-llama/Meta-Llama-3.3-70B-Instruct-Turbo',
-		'meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo',
-		'deepseek-ai/DeepSeek-V3',
-		'deepseek-ai/DeepSeek-R1',
-		'Qwen/Qwen3-235B-A22B',
-		'Qwen/Qwen3-30B-A3B',
-		'Qwen/QwQ-32B',
-		'Qwen/Qwen2.5-Coder-32B-Instruct',
-		'mistralai/Mistral-7B-Instruct-v0.3',  // FREE
-		'google/gemma-2-9b-it',                 // FREE
+	togetherAI: [
+		'together_ai/meta-llama/Llama-4-Maverick-17B-128E-Instruct-FP8',
+		'together_ai/meta-llama/Meta-Llama-3.3-70B-Instruct-Turbo',
+		'together_ai/deepseek-ai/DeepSeek-V3',
+		'together_ai/Qwen/Qwen2.5-72B-Instruct-Turbo',
 	],
-	fireworksAI: [ // https://fireworks.ai/models
-		'accounts/fireworks/models/llama-v3p3-70b-instruct',
-		'accounts/fireworks/models/llama-v3p1-8b-instruct',
-		'accounts/fireworks/models/deepseek-v3',
-		'accounts/fireworks/models/deepseek-r1',
-		'accounts/fireworks/models/qwen3-235b-a22b',
-		'accounts/fireworks/models/qwen3-30b-a3b',
-		'accounts/fireworks/models/mixtral-8x7b-instruct',
-		'accounts/fireworks/models/llama-v3p2-11b-vision-instruct', // FREE
-		'accounts/fireworks/models/qwen2p5-coder-32b-instruct',
-		'accounts/fireworks/models/phi-3-vision-128k-instruct',    // FREE
-	],
-	cerebras: [ // https://inference.cerebras.ai — very fast inference
-		'llama-4-scout-17b-16e-instruct',
-		'llama-3.3-70b',
-		'llama-3.1-70b',
-		'llama-3.1-8b',
-		'deepseek-r1-distill-llama-70b',
-		'qwen-3-32b',
-	],
-	sambaNova: [ // https://sambanova.ai/technology/full-stack-ai-platform
-		'Meta-Llama-3.3-70B-Instruct',
-		'Meta-Llama-3.1-405B-Instruct',
-		'Meta-Llama-3.1-8B-Instruct',
-		'DeepSeek-R1-Distill-Llama-70B',
-		'DeepSeek-V3-0324',
-		'Qwen3-32B',
-		'Qwen2.5-Coder-32B-Instruct',
-	],
-	novitaAI: [ // https://novita.ai/llm-api
+	fireworksAI: [
 		'meta-llama/llama-4-maverick',
-		'meta-llama/llama-4-scout',
 		'meta-llama/llama-3.3-70b-instruct',
-		'deepseek/deepseek-v3-0324',
-		'deepseek/deepseek-r1',
-		'qwen/qwen3-235b-a22b',
-		'qwen/qwen3-30b-a3b',
-		'google/gemma-3-27b-it',  // paid but cheap
-		'mistralai/mistral-7b-instruct', // cheap
+		'meta-llama/llama-3.1-405b-instruct',
+		'meta-llama/llama-3.1-8b-instruct',
 	],
-	freeModels: [ // Curated list of FREE models via OpenRouter (all :free tagged)
-		'google/gemini-2.0-flash-exp:free',
-		'google/gemini-2.0-pro-exp-02-05:free',
-		'google/gemini-3.1-flash-preview:free',
-		'deepseek/deepseek-r1:free',
-		'deepseek/deepseek-v3:free',
-		'mistralai/mistral-small-3.1-24b-instruct:free',
-		'meta-llama/llama-3.3-70b-instruct:free',
-		'qwen/qwen3-235b-a22b:free',
-		'qwen/qwq-32b:free',
-		'microsoft/phi-4-reasoning-plus:free',
-		'zhipuai/glm-4-flash:free',
-		'nvidia/nemotron-3-super:free',
-		'arcee/trinity-large-preview:free',
-		'stepfun/step-3.5-flash:free',
-		'moondream/moondream2:free',
-	],
-
-
 } as const satisfies Record<ProviderName, string[]>
 
 
