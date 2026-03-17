@@ -937,11 +937,6 @@ export const sendLLMMessageToProviderImplementation = {
 		sendFIM: null,
 		list: null,
 	},
-	glm: {
-		sendChat: (params) => _sendOpenAICompatibleChat(params),
-		sendFIM: null,
-		list: null,
-	},
 	cohere: {
 		sendChat: (params) => _sendOpenAICompatibleChat(params),
 		sendFIM: null,
@@ -962,27 +957,6 @@ export const sendLLMMessageToProviderImplementation = {
 		sendFIM: null,
 		list: null,
 	},
-	cerebras: {
-		sendChat: (params) => _sendOpenAICompatibleChat(params),
-		sendFIM: null,
-		list: null,
-	},
-	sambaNova: {
-		sendChat: (params) => _sendOpenAICompatibleChat(params),
-		sendFIM: null,
-		list: null,
-	},
-	novitaAI: {
-		sendChat: (params) => _sendOpenAICompatibleChat(params),
-		sendFIM: null,
-		list: null,
-	},
-	freeModels: {
-		sendChat: (params) => _sendOpenAICompatibleChat(params),
-		sendFIM: null,
-		list: null,
-	},
-
 } satisfies CallFnOfProvider
 
 

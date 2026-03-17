@@ -152,7 +152,6 @@ const _validatedModelState = (state: Omit<LoopholeSettingsState, '_modelOptions'
 		const settingsAtProvider = newSettingsOfProvider[providerName]
 
 		let didFillInProviderSettings = Object.keys(defaultProviderSettings[providerName]).every(key => !!settingsAtProvider[key as keyof typeof settingsAtProvider])
-		if (providerName === 'freeModels') didFillInProviderSettings = true // free models don't require an API key to be seen or used
 
 		if (didFillInProviderSettings === settingsAtProvider._didFillInProviderSettings) continue
 
