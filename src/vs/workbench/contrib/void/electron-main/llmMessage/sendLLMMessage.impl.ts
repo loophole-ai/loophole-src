@@ -168,7 +168,27 @@ const newOpenAICompatibleSDK = async ({ settingsOfProvider, providerName, includ
 		return new OpenAI({ baseURL: 'https://api.mistral.ai/v1', apiKey: thisConfig.apiKey, ...commonPayloadOpts })
 	}
 
-	else throw new Error(`Loophole providerName was invalid: ${providerName}.`)
+	else if (providerName === 'cohere') {
+    const thisConfig = settingsOfProvider[providerName]
+    return new OpenAI({ baseURL: 'https://api.cohere.com/compatibility/v1', apiKey: thisConfig.apiKey, ...commonPayloadOpts })
+    }
+		
+    else if (providerName === 'perplexity') {
+        const thisConfig = settingsOfProvider[providerName]
+        return new OpenAI({ baseURL: 'https://api.perplexity.ai', apiKey: thisConfig.apiKey, ...commonPayloadOpts })
+    }
+		
+    else if (providerName === 'togetherAI') {
+        const thisConfig = settingsOfProvider[providerName]
+        return new OpenAI({ baseURL: 'https://api.together.xyz/v1', apiKey: thisConfig.apiKey, ...commonPayloadOpts })
+    }
+		
+    else if (providerName === 'fireworksAI') {
+        const thisConfig = settingsOfProvider[providerName]
+        return new OpenAI({ baseURL: 'https://api.fireworks.ai/inference/v1', apiKey: thisConfig.apiKey, ...commonPayloadOpts })
+    }
+		
+    else throw new Error(`Loophole providerName was invalid: ${providerName}.`)
 }
 
 
