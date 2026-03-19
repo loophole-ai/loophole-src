@@ -169,8 +169,8 @@ const newOpenAICompatibleSDK = async ({ settingsOfProvider, providerName, includ
 	}
 
 	else if (providerName === 'cohere') {
-    const thisConfig = settingsOfProvider[providerName]
-    return new OpenAI({ baseURL: 'https://api.cohere.com/compatibility/v1', apiKey: thisConfig.apiKey, ...commonPayloadOpts })
+        const thisConfig = settingsOfProvider[providerName]
+        return new OpenAI({ baseURL: 'https://api.cohere.com/compatibility/v1', apiKey: thisConfig.apiKey, ...commonPayloadOpts })
     }
 		
     else if (providerName === 'perplexity') {
