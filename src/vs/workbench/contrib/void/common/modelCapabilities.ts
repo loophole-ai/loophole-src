@@ -189,16 +189,16 @@ export const defaultModelsOfProvider = {
 		'sonar-reasoning',
 	],
 	togetherAI: [
-		'together_ai/meta-llama/Llama-4-Maverick-17B-128E-Instruct-FP8',
-		'together_ai/meta-llama/Meta-Llama-3.3-70B-Instruct-Turbo',
-		'together_ai/deepseek-ai/DeepSeek-V3',
-		'together_ai/Qwen/Qwen2.5-72B-Instruct-Turbo',
+		'meta-llama/Llama-4-Maverick-17B-128E-Instruct-FP8',
+		'meta-llama/Meta-Llama-3.3-70B-Instruct-Turbo',
+		'deepseek-ai/DeepSeek-V3',
+		'Qwen/Qwen2.5-72B-Instruct-Turbo',
 	],
 	fireworksAI: [
-		'meta-llama/llama-4-maverick',
-		'meta-llama/llama-3.3-70b-instruct',
-		'meta-llama/llama-3.1-405b-instruct',
-		'meta-llama/llama-3.1-8b-instruct',
+		'accounts/fireworks/models/llama4-maverick-instruct-basic',
+		'accounts/fireworks/models/llama-v3p3-70b-instruct',
+		'accounts/fireworks/models/llama-v3p1-405b-instruct',
+		'accounts/fireworks/models/llama-v3p1-8b-instruct',
 	],
 } as const satisfies Record<ProviderName, string[]>
 
