@@ -161,6 +161,9 @@ export const defaultModelsOfProvider = {
 		'perplexity/sonar',
 		'perplexity/sonar-reasoning',
 		'z-ai/glm-5-turbo',
+		'z-ai/glm-5',
+		'z-ai/glm-4.7',
+		'z-ai/glm-4.5-air:free',
 		'openrouter/auto',
 	],
 	groq: [
