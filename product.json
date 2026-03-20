@@ -23,6 +23,7 @@
 	"win32x64UserAppId": "{{8BED5DC1-6C55-46E6-9FE6-18F7E6F7C7F1}",
 	"win32arm64UserAppId": "{{F6C87466-BC82-4A8F-B0FF-18CA366BA4D8}",
 	"win32AppUserModelId": "Loophole.Editor",
+	"win32IconPath": "resources/win32/code.ico",
 	"win32ShellNameShort": "L&oophole",
 	"win32TunnelServiceMutex": "loophole-tunnelservice",
 	"win32TunnelMutex": "loophole-tunnel",
