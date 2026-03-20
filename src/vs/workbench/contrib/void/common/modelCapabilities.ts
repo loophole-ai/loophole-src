@@ -195,6 +195,7 @@ export const defaultModelsOfProvider = {
 		'mistralai/Mistral-Small-24B-Instruct-2501',
 	],
 	fireworksAI: [
+		'accounts/fireworks/models/gpt-oss-120b',
 		'accounts/fireworks/models/llama4-maverick-instruct-basic',
 		'accounts/fireworks/models/llama-v3p3-70b-instruct',
 		'accounts/fireworks/models/llama-v3p1-405b-instruct',
