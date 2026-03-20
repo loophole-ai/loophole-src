@@ -199,7 +199,7 @@ export const defaultModelsOfProvider = {
 		'accounts/fireworks/models/gpt-oss-120b',
 		'accounts/fireworks/models/llama4-maverick-instruct-basic',
 		'accounts/fireworks/models/llama-v3p3-70b-instruct',
-		'accounts/fireworks/models/llama-v3p1-405b-instruct',
+		'accounts/fireworks/models/deepseek-v3',
 		'accounts/fireworks/models/llama-v3p1-8b-instruct',
 	],
 } as const satisfies Record<ProviderName, string[]>
