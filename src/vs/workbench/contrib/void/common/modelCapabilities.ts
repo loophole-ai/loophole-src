@@ -190,9 +190,9 @@ export const defaultModelsOfProvider = {
 	],
 	togetherAI: [
 		'meta-llama/Llama-4-Maverick-17B-128E-Instruct-FP8',
-		'meta-llama/Meta-Llama-3.3-70B-Instruct-Turbo',
+		'meta-llama/Llama-3.3-70B-Instruct-Turbo',
 		'deepseek-ai/DeepSeek-V3',
-		'Qwen/Qwen2.5-72B-Instruct-Turbo',
+		'mistralai/Mistral-Small-24B-Instruct-2501',
 	],
 	fireworksAI: [
 		'accounts/fireworks/models/llama4-maverick-instruct-basic',
