@@ -19,10 +19,11 @@ async function main(buildDir) {
     }
     const product = JSON.parse(fs_1.default.readFileSync(path_1.default.join(root, 'product.json'), 'utf8'));
     const appName = product.nameLong + '.app';
-    const x64AppPath = path_1.default.join(buildDir, 'VSCode-darwin-x64', appName);
-    const arm64AppPath = path_1.default.join(buildDir, 'VSCode-darwin-arm64', appName);
+    const appNameShort = product.nameShort || 'VSCode';
+    const x64AppPath = path_1.default.join(buildDir, `${appNameShort}-darwin-x64`, appName);
+    const arm64AppPath = path_1.default.join(buildDir, `${appNameShort}-darwin-arm64`, appName);
     const asarRelativePath = path_1.default.join('Contents', 'Resources', 'app', 'node_modules.asar');
-    const outAppPath = path_1.default.join(buildDir, `VSCode-darwin-${arch}`, appName);
+    const outAppPath = path_1.default.join(buildDir, `${appNameShort}-darwin-${arch}`, appName);
     const productJsonPath = path_1.default.resolve(outAppPath, 'Contents', 'Resources', 'app', 'product.json');
     const filesToSkip = [
         '**/CodeResources',

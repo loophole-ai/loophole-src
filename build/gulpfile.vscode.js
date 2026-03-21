@@ -494,6 +494,7 @@ BUILD_TARGETS.forEach(buildTarget => {
 		const sourceFolderName = `out-vscode${dashed(minified)}`;
 		// Use the product name for the destination folder, not the hardcoded "VSCode"
 		const appName = product.nameShort || 'VSCode';
+		const taskName = appName.toLowerCase();
 		const destinationFolderName = `${appName}${dashed(platform)}${dashed(arch)}`;
 		console.log(`[DEBUG] Platform: ${platform}, Arch: ${arch}, Minified: ${minified || 'false'}, AppName: ${appName}, DestinationFolder: ${destinationFolderName}`);
 
@@ -507,10 +508,10 @@ BUILD_TARGETS.forEach(buildTarget => {
 			tasks.push(patchWin32DependenciesTask(destinationFolderName));
 		}
 
-		const vscodeTaskCI = task.define(`vscode${dashed(platform)}${dashed(arch)}${dashed(minified)}-ci`, task.series(...tasks));
+		const vscodeTaskCI = task.define(`${taskName}${dashed(platform)}${dashed(arch)}${dashed(minified)}-ci`, task.series(...tasks));
 		gulp.task(vscodeTaskCI);
 
-		const vscodeTask = task.define(`vscode${dashed(platform)}${dashed(arch)}${dashed(minified)}`, task.series(
+		const vscodeTask = task.define(`${taskName}${dashed(platform)}${dashed(arch)}${dashed(minified)}`, task.series(
 			minified ? compileBuildWithManglingTask : compileBuildWithoutManglingTask,
 			cleanExtensionsBuildTask,
 			compileNonNativeExtensionsBuildTask,
@@ -519,6 +520,12 @@ BUILD_TARGETS.forEach(buildTarget => {
 			vscodeTaskCI
 		));
 		gulp.task(vscodeTask);
+
+		// Also expose 'vscode' prefix for compatibility if needed
+		if (taskName !== 'vscode') {
+			gulp.task(task.define(`vscode${dashed(platform)}${dashed(arch)}${dashed(minified)}-ci`, vscodeTaskCI));
+			gulp.task(task.define(`vscode${dashed(platform)}${dashed(arch)}${dashed(minified)}`, vscodeTask));
+		}
 
 		return vscodeTask;
 	});

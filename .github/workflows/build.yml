@@ -1,11 +1,35 @@
-name: Build Windows Script
+name: Build Loophole
 
 on:
   workflow_dispatch:
 
 jobs:
   build:
-    runs-on: windows-latest
+    name: Build (${{ matrix.platform }}-${{ matrix.arch }})
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-latest
+            platform: win32
+            arch: x64
+          - os: windows-latest
+            platform: win32
+            arch: arm64
+          - os: macos-13
+            platform: darwin
+            arch: x64
+          - os: macos-14
+            platform: darwin
+            arch: arm64
+          - os: ubuntu-latest
+            platform: linux
+            arch: x64
+          - os: ubuntu-latest
+            platform: linux
+            arch: arm64
+
+    runs-on: ${{ matrix.os }}
 
     steps:
       - name: Checkout
@@ -15,6 +39,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
+          cache: 'npm'
 
       - name: Install dependencies
         run: npm install
@@ -31,20 +56,84 @@ jobs:
         env:
           NODE_OPTIONS: "--max-old-space-size=8192"
 
-      - name: Build Windows App
-        run: npm run gulp -- loophole-win32-x64
+      - name: Build App
+        run: npm run gulp -- loophole-${{ matrix.platform }}-${{ matrix.arch }}
         env:
           NODE_OPTIONS: "--max-old-space-size=8192"
 
-      - name: Build Windows Installer
-        run: npm run gulp -- loophole-win32-x64-user-setup
+      - name: Build Windows Installers
+        if: matrix.platform == 'win32'
+        run: |
+          npm run gulp -- loophole-win32-${{ matrix.arch }}-user-setup
+          npm run gulp -- loophole-win32-${{ matrix.arch }}-system-setup
         env:
           NODE_OPTIONS: "--max-old-space-size=8192"
 
-      - name: Upload artifact
+      - name: Build Linux Packages
+        if: matrix.platform == 'linux'
+        run: |
+          npm run gulp -- loophole-linux-${{ matrix.arch }}-prepare-deb
+          npm run gulp -- loophole-linux-${{ matrix.arch }}-build-deb
+          npm run gulp -- loophole-linux-${{ matrix.arch }}-prepare-rpm
+          npm run gulp -- loophole-linux-${{ matrix.arch }}-build-rpm
+          # Snap might require manual setup or a special runner, so we attempt it
+          npm run gulp -- loophole-linux-${{ matrix.arch }}-build-snap || true
+        env:
+          NODE_OPTIONS: "--max-old-space-size=8192"
+
+      - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: loophole-windows
+          name: loophole-${{ matrix.platform }}-${{ matrix.arch }}
           path: |
-            Loophole-win32-x64/
-            .build/win32-x64/user-setup/
+            Loophole-${{ matrix.platform }}-${{ matrix.arch }}/
+            .build/${{ matrix.platform }}-${{ matrix.arch }}/*-setup/
+            .build/linux/deb/*/deb/*.deb
+            .build/linux/rpm/*/*.rpm
+            .build/linux/snap/*/*.snap
+          retention-days: 5
+
+  # Separate job for macOS Universal Build
+  macos-universal:
+    needs: build
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm install
+        env:
+          NODE_OPTIONS: "--max-old-space-size=8192"
+
+      - name: Download x64 Build
+        uses: actions/download-artifact@v4
+        with:
+          name: loophole-darwin-x64
+          path: builds/Loophole-darwin-x64
+
+      - name: Download arm64 Build
+        uses: actions/download-artifact@v4
+        with:
+          name: loophole-darwin-arm64
+          path: builds/Loophole-darwin-arm64
+
+      - name: Create Universal App
+        run: |
+          export VSCODE_ARCH=universal
+          node build/darwin/create-universal-app.js $(pwd)/builds
+        env:
+          NODE_OPTIONS: "--max-old-space-size=8192"
+
+      - name: Upload Universal Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: loophole-darwin-universal
+          path: builds/Loophole-darwin-universal/
+          retention-days: 5
