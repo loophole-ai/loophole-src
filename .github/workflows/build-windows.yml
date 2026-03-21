@@ -27,7 +27,7 @@ jobs:
           NODE_OPTIONS: "--max-old-space-size=8192"
 
       - name: Build Windows App
-        run: npm run gulp -- vscode-win32-x64
+        run: npm run gulp -- loophole-win32-x64
         env:
           NODE_OPTIONS: "--max-old-space-size=8192"
 
@@ -35,7 +35,7 @@ jobs:
       # Loophole-win32-x64 (from product.nameShort), so we must not
       # rename the folder until after this step.
       - name: Build Windows Installer
-        run: npm run gulp -- vscode-win32-x64-user-setup
+        run: npm run gulp -- loophole-win32-x64-user-setup
         env:
           NODE_OPTIONS: "--max-old-space-size=8192"
 
