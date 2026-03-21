@@ -124,31 +124,9 @@ body {
 	border: 1px solid var(--window-border-color);
 }
 
-/* Loophole Premium UI: Rounded Parts */
-.monaco-workbench .part.sidebar,
-.monaco-workbench .part.editor,
-.monaco-workbench .part.panel,
-.monaco-workbench .part.auxiliarybar {
-	border-radius: 12px;
-	overflow: hidden;
-	/* Add a tiny bit of separation if borders are visible */
-	border: 1px solid var(--vscode-widget-border, transparent);
-}
 
-.monaco-workbench .part.sidebar {
-	border-radius: 0 12px 12px 0;
-	/* Only round right side for left sidebar */
-}
 
-.monaco-workbench .part.sidebar.right {
-	border-radius: 12px 0 0 12px;
-	/* Only round left side for right sidebar */
-}
 
-.monaco-workbench .part.editor {
-	margin: 0 4px;
-	/* Subtle gap for the "floating" feel */
-}
 
 
 .monaco-workbench.border.mac {
@@ -345,24 +323,7 @@ body {
 	outline-offset: -1px;
 	outline-color: var(--vscode-focusBorder);
 	opacity: 1;
-	border-radius: 6px;
-	/* Loophole: Rounded focus */
-}
 
-/* Loophole Premium UI: Rounded Components */
-.monaco-workbench .monaco-button,
-.monaco-workbench input,
-.monaco-workbench select,
-.monaco-workbench textarea,
-.monaco-workbench .monaco-inputbox,
-.monaco-workbench .monaco-list-row {
-	border-radius: 6px !important;
-}
-
-.monaco-workbench .monaco-list-row {
-	margin: 0 4px;
-	/* Slight gap for rounded feeling in lists */
-	width: calc(100% - 8px);
 }
 
 
