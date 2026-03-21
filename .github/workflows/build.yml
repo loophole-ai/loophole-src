@@ -1,6 +1,10 @@
 name: Build Loophole
 
 on:
+  push:
+    branches: [main, loophole]
+  pull_request:
+    branches: [main, loophole]
   workflow_dispatch:
 
 jobs:
@@ -57,7 +61,12 @@ jobs:
           NODE_OPTIONS: "--max-old-space-size=8192"
 
       - name: Build App
-        run: npm run gulp -- loophole-${{ matrix.platform }}-${{ matrix.arch }}
+        shell: bash
+        run: |
+          npm run gulp -- loophole-${{ matrix.platform }}-${{ matrix.arch }}
+          # The build outputs to a sibling folder in Gulp (../Loophole-xxx)
+          # Move it into the current workspace for artifact upload
+          mv "../Loophole-${{ matrix.platform }}-${{ matrix.arch }}" .
         env:
           NODE_OPTIONS: "--max-old-space-size=8192"
 
@@ -112,17 +121,11 @@ jobs:
         env:
           NODE_OPTIONS: "--max-old-space-size=8192"
 
-      - name: Download x64 Build
+      - name: Download Darwin Artifacts
         uses: actions/download-artifact@v4
         with:
-          name: loophole-darwin-x64
-          path: builds/Loophole-darwin-x64
-
-      - name: Download arm64 Build
-        uses: actions/download-artifact@v4
-        with:
-          name: loophole-darwin-arm64
-          path: builds/Loophole-darwin-arm64
+          pattern: loophole-darwin-*
+          path: builds/
 
       - name: Create Universal App
         run: |
