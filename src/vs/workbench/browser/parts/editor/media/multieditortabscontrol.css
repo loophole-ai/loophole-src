@@ -108,10 +108,6 @@
 	box-sizing: border-box;
 	padding-left: 10px;
 	outline-offset: -2px;
-	border-radius: 8px 8px 0 0;
-	/* Loophole: Rounded top tabs */
-	margin-right: 2px;
-	/* Slight gap between tabs */
 }
 
 /* Tab Background Color in/active group/tab */

@@ -46,17 +46,7 @@ module.exports = {
 				'8xl': '64px',
 				'9xl': '72px',
 			},
-			borderRadius: {
-				'none': '0',
-				'sm': '4px',
-				'DEFAULT': '8px',
-				'md': '12px',
-				'lg': '16px',
-				'xl': '20px',
-				'2xl': '24px',
-				'3xl': '32px',
-				'full': '9999px',
-			},
+
 			// common colors to use, ordered light to dark
 
 			colors: {
