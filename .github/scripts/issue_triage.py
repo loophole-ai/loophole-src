@@ -3,18 +3,18 @@ from __future__ import annotations
 import os, sys, json, datetime, pathlib, textwrap, requests
 from openai import OpenAI
 
-REPO = "voideditor/void"
+REPO = "loophole/loophole"
 CACHE_FILE = pathlib.Path(".github/triage_cache.json")
 STAMP_FILE = pathlib.Path(".github/last_triage.txt")
 
 THEMES_MD = textwrap.dedent("""\
-1. 🔗 LLM Integration & Provider Support
-2. 🖥 App Build & Platform Compatibility
-3. 🎯 Prompt, Token, and Cost Management
-4. 🧩 Editor UX & Interaction Design
-5. 🤖 Agent & Automation Features
-6. ⚙️ System Config & Environment Setup
-7. 🗃 Meta: Feature Comparison, Structure, and Naming
+1. LLM Integration and Provider Support
+2. App Build and Platform Compatibility
+3. Prompt, Token, and Cost Management
+4. Editor UX and Interaction Design
+5. Agent and Automation Features
+6. System Config and Environment Setup
+7. Meta: Feature Comparison, Structure, and Naming
 """).strip()
 
 client  = OpenAI(api_key=os.environ["OPENAI_API_KEY"])
@@ -82,7 +82,7 @@ Each issue must go into exactly one of the themes below:
 {THEMES_MD}
 
 Format your output in Markdown like:
-## 🎯 Prompt, Token, and Cost Management
+## Prompt, Token, and Cost Management
 - [#123](https://github.com/org/repo/issues/123) – Title here
 
 Classify these issues:
@@ -117,13 +117,13 @@ save_stamp()
 
 # ---------------------------------------------------------------- rebuild wiki
 order = [
-    "🔗 LLM Integration & Provider Support",
-    "🖥 App Build & Platform Compatibility",
-    "🎯 Prompt, Token, and Cost Management",
-    "🧩 Editor UX & Interaction Design",
-    "🤖 Agent & Automation Features",
-    "⚙️ System Config & Environment Setup",
-    "🗃 Meta: Feature Comparison, Structure, and Naming",
+    "LLM Integration and Provider Support",
+    "App Build and Platform Compatibility",
+    "Prompt, Token, and Cost Management",
+    "Editor UX and Interaction Design",
+    "Agent and Automation Features",
+    "System Config and Environment Setup",
+    "Meta: Feature Comparison, Structure, and Naming",
 ]
 
 sections: dict[str, list[int]] = {t: [] for t in order}

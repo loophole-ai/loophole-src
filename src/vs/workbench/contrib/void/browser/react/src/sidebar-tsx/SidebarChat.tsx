@@ -3095,9 +3095,11 @@ export const SidebarChat = () => {
 
 	const initiallySuggestedPromptsHTML = <div className='flex flex-col gap-2 w-full text-nowrap text-loophole-fg-3 select-none'>
 		{[
-			'Summarize my codebase',
-			'How do types work in Rust?',
-			'Create a .loopholerules file for me'
+			'Summarize project',
+			'Explain this code',
+			'Find bugs',
+			'Refactor file',
+			'Create .loopholerules'
 		].map((text, index) => (
 			<div
 				key={index}

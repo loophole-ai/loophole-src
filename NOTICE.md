@@ -1,5 +1,16 @@
-This software is based on Void Editor (Apache 2.0)
-and VS Code (MIT). Original license notices are
-preserved in their respective files.
+# Loophole Notice
 
-Modifications made bycGarv Agnihotri.
+Loophole is based on VS Code and Void.
+
+## Copyright
+
+Loophole is Copyright 2026 Loophole. All rights reserved.
+
+## Original Projects
+
+- [VS Code](https://github.com/microsoft/vscode) (MIT License)
+- [Void](https://github.com/voideditor/void) (Apache License 2.0)
+
+## Contributors
+
+Thank you to everyone who has contributed to this project.

@@ -1,41 +1,64 @@
-# Welcome to Loophole.
+# Loophole
 
-<div align="center">
-	<img
-		src="./src/vs/workbench/browser/parts/editor/media/slice_of_loophole.png"
-	 	alt="Loophole Welcome"
-		width="300"
-	 	height="300"
-	/>
-</div>
+Loophole is an open-source AI code editor. It is a fork of the Void editor, which is a fork of VS Code.
 
-Loophole is the open-source Cursor alternative.
+## Project Background
 
-Use AI agents on your codebase, checkpoint and visualize changes, and bring any model or host locally. Loophole sends messages directly to providers without retaining your data.
+Loophole is built on top of the Void editor. Void itself started as a fork of VS Code to integrate AI features directly into the core editor experience. Loophole continues this mission with a focus on privacy, flexibility, and a premium user experience.
 
-This repo contains the full sourcecode for Loophole. If you're new, welcome!
+## Main Features
 
-- 🧭 [Website](https://loophole.dev)
+- AI Chat Sidebar: Chat with your entire codebase using advanced AI models.
+- Context Awareness: Loophole understands your code structure and relationships.
+- Multiple Providers: Connect to various AI providers or host your own.
+- Privacy First: AI requests are sent directly from your machine to the provider. No intermediate servers store your data.
 
-- 👋 [Discord](https://discord.gg/loophole)
+## Supported AI Providers
 
-- 🚙 [Project Board](https://github.com/orgs/loophole/projects/1)
+Loophole supports a wide range of AI providers, including:
 
+- Anthropic (Claude 3.5 Sonnet, etc.)
+- OpenAI (GPT-4o, etc.)
+- Google Gemini (Gemini 1.5 Pro/Flash)
+- DeepSeek
+- OpenRouter (Aggregator for many models)
+- Local Providers:
+  - Ollama
+  - vLLM
+  - LM Studio
+- Other compatible providers: Groq, xAI, Mistral, Perplexity, and more.
 
-## Note
+## Installation and Run
 
-We've paused work on the Loophole IDE (this repo) to explore a few novel coding ideas. We want to focus on innovation over feature-parity. Loophole will continue running, but without maintenance some existing features might stop working over time. Depending on the direction of our new work, we might not resume Loophole as an IDE.
+To build and run Loophole from source:
 
-We won't be actively reviewing Issues and PRs, but we will respond to all [email](mailto:hello@loophole.dev) inquiries on building and maintaining your own version of Loophole while we're paused. 
+1. System Requirements:
+   - Node.js version 20 or higher.
+   - Python (required for some build tools).
+   - C++ build tools (required for native modules).
 
-## Reference
+2. Setup:
+   ```bash
+   npm install
+   ```
 
-Loophole is a fork of the [vscode](https://github.com/microsoft/vscode) repository. For a guide to the codebase, see [LOOPHOLE_CODEBASE_GUIDE](https://github.com/loophole/loophole/blob/main/LOOPHOLE_CODEBASE_GUIDE.md).
+3. Build UI Components:
+   ```bash
+   npm run buildreact
+   ```
 
-For a guide on how to develop your own version of Loophole, see [HOW_TO_CONTRIBUTE](https://github.com/loophole/loophole/blob/main/HOW_TO_CONTRIBUTE.md) and [loophole-builder](https://github.com/loophole/loophole-builder).
+4. Compile and Run:
+   ```bash
+   npm run watch
+   # In another terminal:
+   npm run electron
+   ```
 
+## More Information
 
+- [LOOPHOLE_CODEBASE_GUIDE.md](./LOOPHOLE_CODEBASE_GUIDE.md) - Technical overview of the project.
+- [HOW_TO_CONTRIBUTE.md](./HOW_TO_CONTRIBUTE.md) - How to help improve Loophole.
 
+## License
 
-## Support
-You can always reach us in our Discord server or contact us via email: hello@loophole.dev.
+Loophole is licensed under the MIT License. It includes code from VS Code and Void editor.
