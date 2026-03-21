@@ -1,9 +1,13 @@
-# VSCode Tests
+# Loophole Tests
 
-## Contents
+This directory contains the test runners for Loophole.
 
-This folder contains the various test runners for VSCode. Please refer to the documentation within for how to run them:
+## Test Suites
 
-* `unit`: our suite of unit tests ([README](unit/README.md))
-* `integration`: our suite of API tests ([README](integration/browser/README.md))
-* `smoke`: our suite of automated UI tests ([README](smoke/README.md))
+- unit/: Unit tests for core logic.
+- integration/: Integration and API tests.
+- smoke/: Automated UI tests (smoke tests).
+
+## How to Run Tests
+
+Refer to the documentation within each folder for specific instructions on how to run each test suite.
