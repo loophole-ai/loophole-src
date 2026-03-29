@@ -57,6 +57,9 @@ jobs:
         run: npm run gulp -- loophole-${{ matrix.suffix }}
         env:
           NODE_OPTIONS: "--max-old-space-size=8192"
+          
+      - name: Move Build Output
+        run: mv ../Loophole-${{ matrix.suffix }} ./Loophole-${{ matrix.suffix }}
 
       - name: Build Installer/Package
         if: matrix.os != 'macos-latest'
@@ -71,6 +74,6 @@ jobs:
         with:
           name: loophole-${{ matrix.os }}
           path: |
-            ../Loophole-${{ matrix.suffix }}/
+            Loophole-${{ matrix.suffix }}/
             .build/${{ matrix.suffix }}/
             .build/linux/deb/
