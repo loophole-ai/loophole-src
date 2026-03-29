@@ -304,12 +304,18 @@ const BUILD_TARGETS = [
 	{ arch: 'arm64' },
 ];
 
+const taskNamePrefix = product.nameShort.toLowerCase();
+
 BUILD_TARGETS.forEach(({ arch }) => {
 	const debArch = getDebPackageArch(arch);
 	const prepareDebTask = task.define(`vscode-linux-${arch}-prepare-deb`, task.series(rimraf(`.build/linux/deb/${debArch}`), prepareDebPackage(arch)));
 	gulp.task(prepareDebTask);
 	const buildDebTask = task.define(`vscode-linux-${arch}-build-deb`, buildDebPackage(arch));
 	gulp.task(buildDebTask);
+	
+	// Branded tasks
+	gulp.task(task.define(`${taskNamePrefix}-linux-${arch}-prepare-deb`, task.series(prepareDebTask)));
+	gulp.task(task.define(`${taskNamePrefix}-linux-${arch}-build-deb`, task.series(buildDebTask)));
 
 	const rpmArch = getRpmPackageArch(arch);
 	const prepareRpmTask = task.define(`vscode-linux-${arch}-prepare-rpm`, task.series(rimraf(`.build/linux/rpm/${rpmArch}`), prepareRpmPackage(arch)));
@@ -317,8 +323,16 @@ BUILD_TARGETS.forEach(({ arch }) => {
 	const buildRpmTask = task.define(`vscode-linux-${arch}-build-rpm`, buildRpmPackage(arch));
 	gulp.task(buildRpmTask);
 
+	// Branded tasks
+	gulp.task(task.define(`${taskNamePrefix}-linux-${arch}-prepare-rpm`, task.series(prepareRpmTask)));
+	gulp.task(task.define(`${taskNamePrefix}-linux-${arch}-build-rpm`, task.series(buildRpmTask)));
+
 	const prepareSnapTask = task.define(`vscode-linux-${arch}-prepare-snap`, task.series(rimraf(`.build/linux/snap/${arch}`), prepareSnapPackage(arch)));
 	gulp.task(prepareSnapTask);
 	const buildSnapTask = task.define(`vscode-linux-${arch}-build-snap`, task.series(prepareSnapTask, buildSnapPackage(arch)));
 	gulp.task(buildSnapTask);
+
+	// Branded tasks
+	gulp.task(task.define(`${taskNamePrefix}-linux-${arch}-prepare-snap`, task.series(prepareSnapTask)));
+	gulp.task(task.define(`${taskNamePrefix}-linux-${arch}-build-snap`, task.series(buildSnapTask)));
 });

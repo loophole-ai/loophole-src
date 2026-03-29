@@ -61,15 +61,15 @@ else {
 	if (Object.keys(product).length === 0) {
 		Object.assign(product, {
 			version: '1.95.0-dev',
-			nameShort: 'Code - OSS Dev',
-			nameLong: 'Code - OSS Dev',
-			applicationName: 'code-oss',
-			dataFolderName: '.vscode-oss',
-			urlProtocol: 'code-oss',
-			reportIssueUrl: 'https://github.com/microsoft/vscode/issues/new',
+			nameShort: 'Loophole Dev',
+			nameLong: 'Loophole Dev',
+			applicationName: 'loophole',
+			dataFolderName: '.loop-hole',
+			urlProtocol: 'loophole',
+			reportIssueUrl: 'https://github.com/loophole-ai/loophole/issues/new',
 			licenseName: 'MIT',
-			licenseUrl: 'https://github.com/microsoft/vscode/blob/main/LICENSE.txt',
-			serverLicenseUrl: 'https://github.com/microsoft/vscode/blob/main/LICENSE.txt'
+			licenseUrl: 'https://github.com/loophole-ai/loophole/blob/main/LICENSE.txt',
+			serverLicenseUrl: 'https://github.com/loophole-ai/loophole/blob/main/LICENSE.txt'
 		});
 	}
 }
