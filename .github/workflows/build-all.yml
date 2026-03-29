@@ -71,6 +71,6 @@ jobs:
         with:
           name: loophole-${{ matrix.os }}
           path: |
-            Loophole-${{ matrix.suffix }}/
+            ../Loophole-${{ matrix.suffix }}/
             .build/${{ matrix.suffix }}/
             .build/linux/deb/
