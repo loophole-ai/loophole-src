@@ -507,8 +507,11 @@ BUILD_TARGETS.forEach(buildTarget => {
 			tasks.push(patchWin32DependenciesTask(destinationFolderName));
 		}
 
+		const appTaskPrefix = product.nameShort.toLowerCase();
+
 		const vscodeTaskCI = task.define(`vscode${dashed(platform)}${dashed(arch)}${dashed(minified)}-ci`, task.series(...tasks));
 		gulp.task(vscodeTaskCI);
+		gulp.task(task.define(`${appTaskPrefix}${dashed(platform)}${dashed(arch)}${dashed(minified)}-ci`, task.series(vscodeTaskCI)));
 
 		const vscodeTask = task.define(`vscode${dashed(platform)}${dashed(arch)}${dashed(minified)}`, task.series(
 			minified ? compileBuildWithManglingTask : compileBuildWithoutManglingTask,
@@ -519,8 +522,7 @@ BUILD_TARGETS.forEach(buildTarget => {
 			vscodeTaskCI
 		));
 		gulp.task(vscodeTask);
-
-		return vscodeTask;
+		gulp.task(task.define(`${appTaskPrefix}${dashed(platform)}${dashed(arch)}${dashed(minified)}`, task.series(vscodeTask)));
 	});
 
 	if (process.platform === platform && process.arch === arch) {
