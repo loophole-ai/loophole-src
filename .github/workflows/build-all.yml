@@ -41,6 +41,7 @@ jobs:
         run: npm install
         env:
           NODE_OPTIONS: "--max-old-space-size=8192"
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build React Components
         run: npm run buildreact
