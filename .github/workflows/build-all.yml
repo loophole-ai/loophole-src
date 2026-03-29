@@ -60,7 +60,9 @@ jobs:
 
       - name: Build Installer/Package
         if: matrix.os != 'macos-latest'
-        run: npm run gulp -- loophole-${{ matrix.installer }}
+        run: |
+          npm run gulp -- loophole-linux-x64-prepare-deb
+          npm run gulp -- loophole-${{ matrix.installer }}
         env:
           NODE_OPTIONS: "--max-old-space-size=8192"
 
