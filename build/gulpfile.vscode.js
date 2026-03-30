@@ -461,13 +461,22 @@ function patchWin32DependenciesTask(destinationFolderName) {
 					'FileDescription': product.nameLong,
 					'FileVersion': packageJson.version,
 					'InternalName': basename,
-					'LegalCopyright': 'Copyright (C) 2024 Loophole. All rights reserved',
+					'LegalCopyright': 'Copyright (C) 2026 Loophole. All rights reserved',
 					'OriginalFilename': basename,
 					'ProductName': product.nameLong,
 					'ProductVersion': packageJson.version,
 				}
 			});
 		}));
+
+		const mainExe = path.join(cwd, `${product.nameShort}.exe`);
+		const icon = path.join(root, 'resources', 'win32', 'code.ico');
+		if (fs.existsSync(mainExe) && fs.existsSync(icon)) {
+			await rcedit(mainExe, { icon });
+			console.log(`[icon] Stamped icon onto ${mainExe}`);
+		} else {
+			console.warn(`[icon] Could not find exe or icon - exe: ${mainExe}, icon: ${icon}`);
+		}
 	};
 }
 
