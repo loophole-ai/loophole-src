@@ -58,16 +58,22 @@ jobs:
         env:
           NODE_OPTIONS: "--max-old-space-size=8192"
           
-      - name: Move Build Output
-        run: mv ../Loophole-${{ matrix.suffix }} ./Loophole-${{ matrix.suffix }}
-
-      - name: Build Installer/Package
-        if: matrix.os != 'macos-latest'
+      - name: Build Installer/Package (Linux)
+        if: matrix.os == 'ubuntu-latest'
         run: |
           npm run gulp -- loophole-linux-x64-prepare-deb
           npm run gulp -- loophole-${{ matrix.installer }}
         env:
           NODE_OPTIONS: "--max-old-space-size=8192"
+
+      - name: Build Installer/Package (Windows)
+        if: matrix.os == 'windows-latest'
+        run: npm run gulp -- loophole-${{ matrix.installer }}
+        env:
+          NODE_OPTIONS: "--max-old-space-size=8192"
+
+      - name: Move Build Output
+        run: mv ../Loophole-${{ matrix.suffix }} ./Loophole-${{ matrix.suffix }}
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
