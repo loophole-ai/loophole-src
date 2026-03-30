@@ -523,6 +523,7 @@ BUILD_TARGETS.forEach(buildTarget => {
 		));
 		gulp.task(vscodeTask);
 		gulp.task(task.define(`${appTaskPrefix}${dashed(platform)}${dashed(arch)}${dashed(minified)}`, task.series(vscodeTask)));
+		return vscodeTask;
 	});
 
 	if (process.platform === platform && process.arch === arch) {
