@@ -192,6 +192,32 @@ const newOpenAICompatibleSDK = async ({ settingsOfProvider, providerName, includ
 }
 
 
+// ------------ SIMULATED FIM (via Chat) ------------
+const sendChatAsFIM = async (params: SendFIMParams_Internal, sendChat: (params: SendChatParams_Internal) => Promise<void>) => {
+	const { messages: { prefix, suffix, stopTokens }, onFinalMessage, onText, onError, separateSystemMessage: systemMessageOverride, ...rest } = params;
+
+	const prompt = `Complete the code between the FOLLOWING PREFIX and FOLLOWING SUFFIX.
+Output ONLY the code that goes in the middle. Do not include any explanations, markdown blocks, or surrounding text.
+
+FOLLOWING PREFIX:
+${prefix}
+
+FOLLOWING SUFFIX:
+${suffix}`;
+
+	await sendChat({
+		...rest,
+		messages: [{ role: 'user', content: prompt }],
+		separateSystemMessage: systemMessageOverride || "You are a helpful coding assistant specialized in code completion. Output ONLY the code to be inserted, without any markdown formatting or explanations.",
+		onText,
+		onFinalMessage,
+		onError,
+		chatMode: null,
+		mcpTools: undefined,
+	});
+}
+
+
 const _sendOpenAICompatibleFIM = async ({ messages: { prefix, suffix, stopTokens }, onFinalMessage, onError, settingsOfProvider, modelName: modelName_, _setAborter, providerName, overridesOfModel }: SendFIMParams_Internal) => {
 
 	const {
@@ -877,22 +903,22 @@ type CallFnOfProvider = {
 export const sendLLMMessageToProviderImplementation = {
 	anthropic: {
 		sendChat: sendAnthropicChat,
-		sendFIM: null,
+		sendFIM: (params) => sendChatAsFIM(params, sendAnthropicChat),
 		list: null,
 	},
 	openAI: {
 		sendChat: (params) => _sendOpenAICompatibleChat(params),
-		sendFIM: null,
+		sendFIM: (params) => sendChatAsFIM(params, (p) => _sendOpenAICompatibleChat(p)),
 		list: null,
 	},
 	xAI: {
 		sendChat: (params) => _sendOpenAICompatibleChat(params),
-		sendFIM: null,
+		sendFIM: (params) => sendChatAsFIM(params, (p) => _sendOpenAICompatibleChat(p)),
 		list: null,
 	},
 	gemini: {
 		sendChat: (params) => sendGeminiChat(params),
-		sendFIM: null,
+		sendFIM: (params) => sendChatAsFIM(params, sendGeminiChat),
 		list: null,
 	},
 	mistral: {
@@ -959,22 +985,22 @@ export const sendLLMMessageToProviderImplementation = {
 	},
 	cohere: {
 		sendChat: (params) => _sendOpenAICompatibleChat(params),
-		sendFIM: null,
+		sendFIM: (params) => sendChatAsFIM(params, (p) => _sendOpenAICompatibleChat(p)),
 		list: null,
 	},
 	perplexity: {
 		sendChat: (params) => _sendOpenAICompatibleChat(params),
-		sendFIM: null,
+		sendFIM: (params) => sendChatAsFIM(params, (p) => _sendOpenAICompatibleChat(p)),
 		list: null,
 	},
 	togetherAI: {
 		sendChat: (params) => _sendOpenAICompatibleChat(params),
-		sendFIM: null,
+		sendFIM: (params) => sendChatAsFIM(params, (p) => _sendOpenAICompatibleChat(p)),
 		list: null,
 	},
 	fireworksAI: {
 		sendChat: (params) => _sendOpenAICompatibleChat(params),
-		sendFIM: null,
+		sendFIM: (params) => sendChatAsFIM(params, (p) => _sendOpenAICompatibleChat(p)),
 		list: null,
 	},
 } satisfies CallFnOfProvider

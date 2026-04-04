@@ -40,8 +40,8 @@ type SimpleLLMMessage = {
 
 
 
-const CHARS_PER_TOKEN = 4 // assume abysmal chars per token
-const TRIM_TO_LEN = 120
+const CHARS_PER_TOKEN = 3.5 // more realistic for code
+const TRIM_TO_LEN = 10_000 // much larger to preserve context
 
 
 
@@ -262,8 +262,8 @@ const prepareOpenAIOrAnthropicMessages = ({
 }): { messages: AnthropicOrOpenAILLMMessage[], separateSystemMessage: string | undefined } => {
 
 	reservedOutputTokenSpace = Math.max(
-		contextWindow * 1 / 2, // reserve at least 1/4 of the token window length
-		reservedOutputTokenSpace ?? 4_096 // defaults to 4096
+		Math.min(contextWindow * 1 / 4, 16_384), // reserve at most 1/4 of the window or 16k tokens
+		reservedOutputTokenSpace ?? 4_096
 	)
 	let messages: (SimpleLLMMessage | { role: 'system', content: string })[] = deepClone(messages_)
 

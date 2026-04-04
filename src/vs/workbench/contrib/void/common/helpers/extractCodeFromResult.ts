@@ -121,17 +121,19 @@ export const extractCodeFromRegular = ({ text, recentlyAddedTextLen }: { text: s
 
 	const pm = new SurroundingsRemover(text)
 
-	pm.removeCodeBlock()
+	// If it doesn't start with a code block, try to find one
+	if (!text.trim().startsWith('```')) {
+		pm.removeFromStartUntilFullMatch('```', true)
+		pm.removeFromStartUntilFullMatch('\n', true) // skip language if any
+	} else {
+		pm.removeCodeBlock()
+	}
 
 	const s = pm.value()
 	const [delta, ignoredSuffix] = pm.deltaInfo(recentlyAddedTextLen)
 
 	return [s, delta, ignoredSuffix]
 }
-
-
-
-
 
 // Ollama has its own FIM, we should not use this if we use that
 export const extractCodeFromFIM = ({ text, recentlyAddedTextLen, midTag, }: { text: string, recentlyAddedTextLen: number, midTag: string }): [string, string, string] => {
