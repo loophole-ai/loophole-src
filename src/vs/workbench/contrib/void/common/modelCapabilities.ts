@@ -180,6 +180,8 @@ export const defaultModelsOfProvider = {
 	cohere: [
 		'command-r-plus',
 		'command-r',
+		'command-r-08-2024',
+		'command-light',
 		'embed-v4.0',
 	],
 	perplexity: [
@@ -200,17 +202,7 @@ export const defaultModelsOfProvider = {
 		'accounts/fireworks/models/deepseek-v3p1',
 		'accounts/fireworks/models/kimi-k2-instruct-0905',
 	],
-	cohere: [
-		'command-r-plus',
-		'command-r',
-		'command-r-08-2024',
-		'command-light',
-	],
-	perplexity: [
-		'sonar-pro',
-		'sonar',
-		'sonar-reasoning',
-	],
+
 } as const satisfies Record<ProviderName, string[]>
 
 

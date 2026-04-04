@@ -194,7 +194,7 @@ const newOpenAICompatibleSDK = async ({ settingsOfProvider, providerName, includ
 
 // ------------ SIMULATED FIM (via Chat) ------------
 const sendChatAsFIM = async (params: SendFIMParams_Internal, sendChat: (params: SendChatParams_Internal) => Promise<void>) => {
-	const { messages: { prefix, suffix, stopTokens }, onFinalMessage, onText, onError, separateSystemMessage: systemMessageOverride, ...rest } = params;
+	const { messages: { prefix, suffix }, onFinalMessage, onText, onError, separateSystemMessage: systemMessageOverride, ...rest } = params;
 
 	const prompt = `Complete the code between the FOLLOWING PREFIX and FOLLOWING SUFFIX.
 Output ONLY the code that goes in the middle. Do not include any explanations, markdown blocks, or surrounding text.
